@@ -58,7 +58,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
         st.session_state.editable_df = pd.DataFrame({"Later": [""], "Earlier": [""]})
     
     edited_df = st.data_editor(
-        st.session_state.editable_df[["Later", "Earlier"]],  # 只显示并允许编辑这两列
+        st.session_state.editable_df,
         column_config={
             "Later": st.column_config.TextColumn("Later"),
             "Earlier": st.column_config.TextColumn("Earlier")
@@ -68,8 +68,9 @@ if data_choice == "上传 CSV 文件或在线填写数据":
         key="inline_editor"
     )
     
-    # 更新 session_state
-    st.session_state.editable_df = edited_df
+    # 只更新指定列，防止异常列或格式污染
+    if all(col in edited_df.columns for col in ["Later", "Earlier"]):
+        st.session_state.editable_df = edited_df[["Later", "Earlier"]].copy()
 
     if st.button("加载上方表格为数据"):
         uploaded_file = None
