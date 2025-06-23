@@ -71,7 +71,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
     )
     
     if st.button("加载上方表格为数据"):
-        st.session_state.editable_df = edited_df.copy()
+        st.session_state["editable_df"] = edited_df.copy()
         st.session_state["loaded_df"] = edited_df.copy()
         st.success("数据已加载！")
         st.rerun()
