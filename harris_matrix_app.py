@@ -70,6 +70,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
     if st.button("加载上方表格为数据"):
         uploaded_file = None
         st.session_state.loaded_df = st.session_state.editable_df.copy()
+        st.rerun()
 else:
     uploaded_file = "新地里地层关系.csv"
 
