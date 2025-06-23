@@ -34,7 +34,8 @@ if data_choice == "上传 CSV 文件":
     st.markdown("""
     ### 使用说明
     
-    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格应当包含later和earlier两列，也就是第一行表头写later,﻿earlier，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。如果想说“M86开口6层下，打破M99和第7层”你的CSV 文件应该长成这样：  \n
+    请使用excel写地层单位表格，保存成CSV文件。  \n
+    表格应当包含later和earlier两列，也就是第一行表头写later,﻿earlier，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。如果想说“M86开口6层下，打破M99和第7层”你的CSV 文件应该长成这样：  \n
     later,earlier  \n
     6层,M86  \n
     M86,M99  \n
@@ -46,6 +47,21 @@ if data_choice == "上传 CSV 文件":
     ---
     """)
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 later 和 earlier 列）", type="csv")
+    st.markdown("""
+    或者你也可以直接在下方在线填写关系对：
+    """)
+    if "editable_df" not in st.session_state:
+        st.session_state.editable_df = pd.DataFrame({"Later": [""], "Earlier": [""]})
+    st.session_state.editable_df = st.data_editor(
+        st.session_state.editable_df,
+        num_rows="dynamic",
+        use_container_width=True,
+        key="inline_editor"
+    )
+
+    if st.button("加载上方表格为数据"):
+        uploaded_file = None
+        st.session_state.loaded_df = st.session_state.editable_df.copy()
 else:
     uploaded_file = "新地里地层关系.csv"
 
@@ -134,8 +150,8 @@ if uploaded_file:
             fig_height = min(max(3, layer_spacing * len(layers)), 20)
             fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', ax=ax)
-            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0.1', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0.1', ax=ax)
 
             nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
             nx.draw_networkx_nodes(G, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
