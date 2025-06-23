@@ -42,18 +42,18 @@ if data_choice == "上传 CSV 文件":
     st.markdown("""
     ### 使用说明
     
-    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格应当包含earlier和later两列，也就是第一行表头写earlier和later，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。你的CSV 文件应该长成这样：  \n
-    earlier, later  \n
-    M14, M19  \n
-    6层, M86  \n
-    M86, M99  \n
-    6层, 7层  \n
+    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格应当包含later和earlier两列，也就是第一行表头写later,﻿earlier，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。你的CSV 文件应该长成这样：  \n
+    later,earlier  \n
+    M14,M19  \n
+    6层,M86  \n
+    M86,M99  \n
+    6层,7层  \n
     ……  \n
     请注意，不可以出现循环结构，如：M14→M19→M14。
     试试吧！  \n
     ---
     """)
-    uploaded_file = st.file_uploader("上传 CSV 文件（包含 earlier 和 later 列）", type="csv")
+    uploaded_file = st.file_uploader("上传 CSV 文件（包含 later 和 earlier 列）", type="csv")
 else:
     uploaded_file = "新地里地层关系.csv"  # 示例数据的路径
 
@@ -70,11 +70,11 @@ if uploaded_file:
         df.columns = df.columns.str.strip().str.capitalize()
     
         if 'Earlier' not in df.columns or 'Later' not in df.columns:
-            st.error("CSV 文件必须包含 'Earlier' 和 'Later' 两列")
+            st.error("CSV 文件必须包含 'Later' 和 'Earlier' 两列")
         else:
             # 构建图
             G = nx.DiGraph()
-            edges = list(zip(df['Earlier'], df['Later']))
+            edges = list(zip(df['Later'], df['Earlier']))
             G.add_edges_from(edges)
     
             # 自动计算节点深度
