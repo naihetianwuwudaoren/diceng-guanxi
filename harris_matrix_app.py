@@ -40,16 +40,18 @@ path_df = None
 # 替换原有表格读取逻辑：仅在点击按钮并有有效数据后再加载
 data_ready = False
 if data_choice != "使用示例数据":
-    st.markdown("### 上传您的地层关系  /n
+    st.markdown("""
+    ### 上传您的地层关系  /n
     每行一条地层关系路径，单位用逗号分隔，如“M86,M99,6层”意为M86→M99→6层。  /n
     不写表头，直接写地层关系。  /n
     地层关系可以重叠交叉，可以全部串在一起写，也可以拆成一行一行碎的短路径，看您喜欢！ /n
     左边晚，右边早。  /n
-    玩得开心！ ")
+    玩得开心！ 
+    """)
     uploaded_file = st.file_uploader("上传 CSV 文件", type="csv")
 
     st.markdown("### 在线填写地层关系  /n
-    使用下方表格在线填写路径")
+    使用下方表格在线填写路径""")
     if "path_table" not in st.session_state:
         st.session_state.path_table = pd.DataFrame(
             [["" for _ in range(6)]],
