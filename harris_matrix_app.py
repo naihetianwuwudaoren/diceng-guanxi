@@ -19,28 +19,38 @@ matplotlib.rcParams['font.family'] = font_name
 
 # === Streamlit 页面设置 ===
 st.set_page_config(page_title="Harris Matrix Viewer", layout="wide")
-st.title("地层关系查询工具")
+st.title("地层关系计算器")
 st.markdown("""
-### 🗂️ 使用说明
+### 使用说明
 
-欢迎使用地层关系查询工具！
+欢迎使用地层关系计算器^ ^！
 
 - 上传你的地层关系 CSV 文件，或使用示例数据（部分新地里墓地打破关系）。
 - 可视化图中每个节点代表一个单位，上面早下面晚。
 - 左侧边栏可调节图形大小、字体和箭头样式。
 - 支持高亮路径查询与图像下载。
-- 你的地层单位关系 CSV 文件第一行应写earlier和later，之后每行标注两个单位的关系，前面的叠压打破后面的，如：  \n
-earlier, later  \n
-M14, M19  \n
-6层, M86  \n
-M86, M99  \n
-6层, 7层  \n
+- 祝你读报告顺利！
+
 ---
 """)
 # === 数据选择：上传或使用示例 ===
-data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件"])
+st.subheader("数据来源")
+data_choice = st.radio("请选择", ["使用示例数据", "上传 CSV 文件"])
 
 if data_choice == "上传 CSV 文件":
+    st.markdown("""
+    ### 使用说明
+    
+    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格有两列，第一行表头应写earlier和later，之后每行写两个单位，这就标注了这两个单位的关系，前面的叠压打破后面的。你的CSV 文件应该长成这样：  \n
+    earlier, later  \n
+    M14, M19  \n
+    6层, M86  \n
+    M86, M99  \n
+    6层, 7层  \n
+    ……
+    试试吧！
+    ---
+    """)
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
 else:
     uploaded_file = "新地里地层关系.csv"  # 示例数据的路径
@@ -86,7 +96,7 @@ if uploaded_file:
                     pos[node] = (x, y)
     
             # 选择要查询的两个节点
-            st.subheader("路径查询")
+            st.subheader("地层关系查询")
             node_list = list(G.nodes)
             unit1 = st.selectbox("选择起点单位", node_list)
             unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1))
@@ -94,9 +104,9 @@ if uploaded_file:
             # 路径查询函数
             def check_relation(u1, u2):
                 if nx.has_path(G, u1, u2):
-                    return list(nx.all_simple_paths(G, source=u1, target=u2)), f"{u1} 比 {u2} 更早"
+                    return list(nx.all_simple_paths(G, source=u1, target=u2)), f"地层关系：{u1} 比 {u2} 更早"
                 elif nx.has_path(G, u2, u1):
-                    return list(nx.all_simple_paths(G, source=u2, target=u1)), f"{u2} 比 {u1} 更早"
+                    return list(nx.all_simple_paths(G, source=u2, target=u1)), f"地层关系：{u2} 比 {u1} 更早"
                 else:
                     return [], f"{u1} 和 {u2} 之间无地层早晚关系"
     
@@ -182,3 +192,4 @@ if uploaded_file:
             )
     except Exception as e:
         st.error(f"❌ 无法读取文件：{e}")    
+        
