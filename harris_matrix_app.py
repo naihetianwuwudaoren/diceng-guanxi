@@ -47,8 +47,8 @@ if data_choice == "上传 CSV 文件":
     6层, M86  \n
     M86, M99  \n
     6层, 7层  \n
-    ……
-    试试吧！
+    ……  \n
+    试试吧！  \n
     ---
     """)
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
