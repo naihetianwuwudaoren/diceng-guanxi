@@ -114,7 +114,7 @@ if uploaded_file:
             # 尝试获取最长路径
             try:
                 longest_path = nx.dag_longest_path(G)
-                if st.button("📌 加载最长路径为查询节点"):
+                if st.button("📌加载图中最长路径为查询节点"):
                     st.session_state.unit1 = longest_path[0]
                     st.session_state.unit2 = longest_path[-1]
                     st.rerun()  # 强制刷新页面以更新下拉框显示
@@ -124,6 +124,21 @@ if uploaded_file:
             
             # 用户界面选择
             unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1))
+
+            # 是否启用“从起点出发的所有路径”
+            highlight_all_from_unit1 = st.checkbox("✨高亮所有从起点出发的路径")
+            
+            # 路径与终点设定
+            if highlight_all_from_unit1:
+                all_paths = []
+                for target in G.nodes:
+                    if target != unit1 and nx.has_path(G, unit1, target):
+                        all_paths.extend(nx.all_simple_paths(G, source=unit1, target=target))
+                relation_text = f"所有从 {unit1} 出发的路径（共 {len(all_paths)} 条）"
+                unit2 = None  # 不设置终点
+            else:
+                unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1))
+
             unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2))
 
             # 路径查询函数
