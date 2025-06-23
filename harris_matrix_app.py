@@ -168,8 +168,24 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
             fig_height = min(max(3, layer_spacing * len(layers)), 20)
             fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0', ax=ax)
-            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0', ax=ax)
+            for (u, v) in G.edges:
+                is_highlight = (u, v) in highlight_edges
+                color = 'red' if is_highlight else 'gray'
+                width = arrow_width + 1.5 if is_highlight else arrow_width
+                alpha = 1.0 if is_highlight else 0.6
+            
+                ax.annotate("",
+                    xy=pos[v], xycoords='data',
+                    xytext=pos[u], textcoords='data',
+                    arrowprops=dict(
+                        arrowstyle='-|>',
+                        color=color,
+                        lw=width,
+                        shrinkA=15, shrinkB=15,  # 避免箭头被节点挡住
+                        mutation_scale=20,       # 控制箭头大小
+                        alpha=alpha
+                    )
+                )
 
             nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
             nx.draw_networkx_nodes(G, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
@@ -183,7 +199,7 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
                     st.markdown(" → ".join(path))
 
             buf = BytesIO()
-            fig.savefig(buf, format="png", dpi=300, bbox_inches='tight')
+            fig.savefig(buf, format="png", dpi=150, bbox_inches='tight')
             buf.seek(0)
             st.download_button("📥下载为 PNG 图像", data=buf, file_name="harris_matrix.png", mime="image/png")
 
