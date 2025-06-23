@@ -136,7 +136,7 @@ if uploaded_file:
                         paths = list(nx.all_simple_paths(G, source=unit1, target=target))
                         all_paths.extend(paths)
                 relation_text = f"所有从 {unit1} 出发的路径（共 {len(all_paths)} 条）"
-                unit2 = None  # 不设置终点
+
             else:
                 unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1), key="select_unit2")
             
