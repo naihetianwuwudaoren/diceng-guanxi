@@ -11,14 +11,18 @@ matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体支持中文
 st.set_page_config(page_title="Harris Matrix Viewer", layout="wide")
 st.title("🧱 Harris Matrix 可视化与路径查询工具")
 
-# === 上传 CSV 文件 ===
-uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
+# === 数据选择：上传或使用示例 ===
+data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件"])
+
+if data_choice == "上传 CSV 文件":
+    uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
+else:
+    uploaded_file = "新地里地层关系.csv"  # 示例数据的路径（仓库根目录）
+
 st.sidebar.header("图形参数调节")
-spacing = st.sidebar.slider("横向节点间距 (spacing)", 1.0, 10.0, 4.0, step=0.5)
 node_size = st.sidebar.slider("节点大小", 500, 5000, 2000, step=100)
 font_size = st.sidebar.slider("字体大小", 6, 30, 10, step=1)
 arrow_width = st.sidebar.slider("箭头粗细", 0.5, 10.0, 1.5, step=0.5)
-layer_spacing = st.sidebar.slider("纵向层间距", 1.0, 10.0, 2.5, step=0.5)
 if uploaded_file:
     # 读取并标准化列名
     df = pd.read_csv(uploaded_file)
@@ -150,3 +154,5 @@ if uploaded_file:
             file_name="harris_matrix.png",
             mime="image/png"
         )
+    except Exception as e:
+        st.error(f"❌ 无法读取文件：{e}")    
