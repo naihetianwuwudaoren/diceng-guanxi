@@ -6,8 +6,18 @@ import matplotlib
 from matplotlib.font_manager import FontProperties
 from io import BytesIO
 
-chinese_font = FontProperties(fname="simhei.ttf")
+# 创建字体属性对象
+chinese_font = FontProperties(fname="SimHei.ttf")  
 
+# 加载 .ttf 字体文件（使用你的字体路径）
+font_path = "SimHei.ttf"  # 或 "NotoSansCJK-Regular.ttc"
+font_manager.fontManager.addfont(font_path)
+
+# 获取字体名（必要时打印）
+font_name = font_manager.FontProperties(fname=font_path).get_name()
+
+# 设置 matplotlib 全局默认字体
+matplotlib.rcParams['font.family'] = font_name
 
 # === Streamlit 页面设置 ===
 st.set_page_config(page_title="Harris Matrix Viewer", layout="wide")
@@ -141,7 +151,7 @@ if uploaded_file:
                                 node_size=node_size + 200,
                                 ax=ax)
     
-            nx.draw_networkx_labels(G, pos, font_size= font_size, font_properties=chinese_font, ax=ax)
+            nx.draw_networkx_labels(G, pos, font_size= font_size, font_family=font_name, ax=ax)
     
     
             ax.set_title("Harris Matrix 图（高亮路径）", fontproperties=chinese_font)
