@@ -93,13 +93,17 @@ if uploaded_file:
 
             if highlight_all:
                 all_paths, unit2 = [], None
+                seen = set()
                 for source in G.nodes:
                     for target in G.nodes:
                         if source != target and nx.has_path(G, source, target):
                             for path in nx.all_simple_paths(G, source=source, target=target):
                                 if unit1 in path:
-                                    all_paths.append(path)
-                relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条）"
+                                    t = tuple(path)
+                                    if not any(set(t).issubset(set(p)) for p in seen):
+                                        seen.add(t)
+                all_paths = list(seen)
+                relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条，已去除包含关系）"
             else:
                 unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
                 all_paths, relation_text = check_relation(unit1, unit2)
