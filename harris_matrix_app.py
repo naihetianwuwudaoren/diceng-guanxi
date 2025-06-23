@@ -165,7 +165,7 @@ if path_df is not None:
         for (u, v) in G.edges:
             is_highlight = (u, v) in highlight_edges
             color = 'red' if is_highlight else 'gray'
-            width = narrow_width + 1.5 if is_highlight else narrow_width
+            width = arrow_width + 1.5 if is_highlight else arrow_width
             alpha = 1.0 if is_highlight else 0.6
 
             ax.annotate("",
