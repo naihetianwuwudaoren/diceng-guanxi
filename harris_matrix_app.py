@@ -41,7 +41,7 @@ if data_choice == "上传 CSV 文件":
     st.markdown("""
     ### 使用说明
     
-    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格有两列，第一行表头应写earlier和later，之后每行写两个单位，这就标注了这两个单位的关系，前面的叠压打破后面的。你的CSV 文件应该长成这样：  \n
+    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格应当包含earlier和later两列，也就是第一行表头写earlier和later，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。你的CSV 文件应该长成这样：  \n
     earlier, later  \n
     M14, M19  \n
     6层, M86  \n
@@ -51,7 +51,7 @@ if data_choice == "上传 CSV 文件":
     试试吧！  \n
     ---
     """)
-    uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
+    uploaded_file = st.file_uploader("上传 CSV 文件（包含 earlier 和 later 列）", type="csv")
 else:
     uploaded_file = "新地里地层关系.csv"  # 示例数据的路径
 
