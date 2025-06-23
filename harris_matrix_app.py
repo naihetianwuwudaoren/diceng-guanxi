@@ -29,7 +29,7 @@ st.markdown("""
 """)
 
 # 示例数据
-example_df = pd.read_csv("新地里地层关系.csv", header=None)
+example_df = pd.read_csv("新地里地层关系.csv", header=None, encoding="utf-8-sig")
 
 # 选择数据源
 st.subheader("数据来源")
