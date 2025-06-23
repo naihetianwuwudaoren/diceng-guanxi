@@ -23,6 +23,8 @@ st.sidebar.header("图形参数调节")
 node_size = st.sidebar.slider("节点大小", 500, 5000, 2000, step=100)
 font_size = st.sidebar.slider("字体大小", 6, 30, 10, step=1)
 arrow_width = st.sidebar.slider("箭头粗细", 0.5, 10.0, 1.5, step=0.5)
+spacing = 4.0
+layer_spacing = 2.5
 if uploaded_file:
     try:
         # 读取并标准化列名
