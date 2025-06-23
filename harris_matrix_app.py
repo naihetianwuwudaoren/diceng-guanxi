@@ -44,7 +44,10 @@ else:
 
     st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
     if "path_table" not in st.session_state:
-        st.session_state.path_table = pd.DataFrame([["", ""]], columns=[f"Unit {i+1}" for i in range(6)])
+        st.session_state.path_table = pd.DataFrame(
+            [["" for _ in range(6)]],
+            columns=[f"Unit {i+1}" for i in range(6)]
+        )
 
     editable_df = st.data_editor(
         st.session_state.path_table,
