@@ -18,17 +18,33 @@ st.title("地层关系计算器")
 
 st.markdown("""
 ### 使用说明
-欢迎使用地层关系计算器 ^ ^！
-- 上传你的 CSV 地层关系表格，或使用示例数据
-- 可查询任意两个单位的相对时间关系
-- 图中节点大致按时间排列，但不精确，请以查询为准
-- 支持高亮路径和下载图像
+欢迎使用地层关系计算器^ ^！
+- 上传你的地层关系 CSV 文件，或使用示例数据（新地里墓地部分打破关系）。
+- 根据你的CSV文件里的地层关系，这里可以查询里面任意两个单位的相对关系（它们也可能没有关系）。
+- 图中单位节点大致按照地层早晚关系排布，但不绝对，请以具体查询为准。查询到的路径里上面的节点晚，下面的节点早。
+- 左侧边栏可调节圆点大小、字体和箭头线条粗细。
+- 支持高亮路径查询与图像下载。
+- 祝你读报告顺利！
 """)
 
 # 选择数据源
 st.subheader("数据来源")
 data_choice = st.radio("请选择", ["使用示例数据", "上传 CSV 文件"])
 if data_choice == "上传 CSV 文件":
+    st.markdown("""
+    ### 使用说明
+    
+    请使用excel写地层单位表格，保存成CSV文件。也可以直接用记事本写。表格应当包含later和earlier两列，也就是第一行表头写later,﻿earlier，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。如果想说“M86开口6层下，打破M99和第7层”你的CSV 文件应该长成这样：  \n
+    later,earlier  \n
+    6层,M86  \n
+    M86,M99  \n
+    M86,7层  \n
+    6层,7层  \n
+    ……  \n
+    请注意，不可以出现循环结构，如：M14→M19→M14。
+    试试吧！  \n
+    ---
+    """)
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 later 和 earlier 列）", type="csv")
 else:
     uploaded_file = "新地里地层关系.csv"
@@ -73,14 +89,14 @@ if uploaded_file:
 
             try:
                 longest_path = nx.dag_longest_path(G)
-                if st.button("\U0001F4CC加载图中最长路径为查询节点"):
+                if st.button("加载最典型的一组叠压打破关系"):
                     st.session_state.unit1, st.session_state.unit2 = longest_path[0], longest_path[-1]
                     st.rerun()
             except nx.NetworkXUnfeasible:
                 st.warning("图中存在环，无法计算最长路径")
 
             unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
-            highlight_all = st.checkbox("✨高亮所有经过起点单位的路径")
+            highlight_all = st.checkbox("高亮所有经过起点单位的地层关系")
 
             def check_relation(u1, u2):
                 if u2 is None:
