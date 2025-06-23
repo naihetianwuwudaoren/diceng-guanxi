@@ -136,7 +136,7 @@ if uploaded_file:
                         paths = list(nx.all_simple_paths(G, source=unit1, target=target))
                         all_paths.extend(paths)
                 relation_text = f"所有从 {unit1} 出发的路径（共 {len(all_paths)} 条）"
-
+                unit2 = None  # 明确赋值为 None，防止后面引用出错
             else:
                 unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1), key="select_unit2")
             
@@ -164,7 +164,9 @@ if uploaded_file:
             for path in all_paths:
                 highlight_nodes.update(path)
             # 高亮用户查询的两个单位（即使无路径）
-            highlight_nodes.update([unit1, unit2])
+            highlight_nodes.update([unit1])
+            if unit2:
+                highlight_nodes.add(unit2)
             
             # 画图
             # 计算图层和最大列数
