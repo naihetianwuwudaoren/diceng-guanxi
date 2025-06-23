@@ -34,7 +34,8 @@ if data_choice == "上传 CSV 文件":
     st.markdown("""
     ### 使用说明
     
-    请使用excel写地层单位表格，保存成CSV文件。  \n
+    如果选择上传CSV文件，请使用excel写地层单位表格，保存成CSV文件。  \n
+    或者可以填写下方在线表格。  \n
     表格应当包含later和earlier两列，也就是第一行表头写later,﻿earlier，之后每行写两个单位，就标注了这两个单位的关系，前面的叠压打破后面的。如果想说“M86开口6层下，打破M99和第7层”你的CSV 文件应该长成这样：  \n
     later,earlier  \n
     6层,M86  \n
@@ -45,15 +46,22 @@ if data_choice == "上传 CSV 文件":
     请注意，不可以出现循环结构，如：M14→M19→M14。
     试试吧！  \n
     ---
+    ### 上传 CSV 文件
     """)
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 later 和 earlier 列）", type="csv")
     st.markdown("""
+    ---
+    ### 在线编辑地层关系表格
     或者你也可以直接在下方在线填写关系对：
     """)
     if "editable_df" not in st.session_state:
         st.session_state.editable_df = pd.DataFrame({"Later": [""], "Earlier": [""]})
     st.session_state.editable_df = st.data_editor(
-        st.session_state.editable_df,
+        st.session_state.editable_df[["Later", "Earlier"]],  # 只显示并允许编辑这两列
+        column_config={
+            "Later": st.column_config.TextColumn("Later"),
+            "Earlier": st.column_config.TextColumn("Earlier")
+        },
         num_rows="dynamic",
         use_container_width=True,
         key="inline_editor"
