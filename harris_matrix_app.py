@@ -139,10 +139,6 @@ if uploaded_file:
             all_paths, relation_text = check_relation(unit1, unit2)
             st.markdown(f"**{relation_text}**")
     
-            if all_paths:
-                for path in all_paths:
-                    st.markdown(" → ".join(path))
-    
             # 提取高亮边
             highlight_edges = set()
             for path in all_paths:
