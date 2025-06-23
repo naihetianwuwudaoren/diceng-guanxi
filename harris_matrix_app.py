@@ -8,10 +8,10 @@ from matplotlib import font_manager
 from io import BytesIO
 
 # 创建字体属性对象
-chinese_font = FontProperties(fname="SimHei.ttf")  
+chinese_font = FontProperties(fname="simhei.ttf")  
 
 # 加载 .ttf 字体文件（使用你的字体路径）
-font_path = "SimHei.ttf"  # 或 "NotoSansCJK-Regular.ttc"
+font_path = "simhei.ttf" 
 font_manager.fontManager.addfont(font_path)
 
 # 获取字体名（必要时打印）
