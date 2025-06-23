@@ -49,19 +49,16 @@ else:
             columns=[f"Unit {i+1}" for i in range(6)]
         )
 
-    # 等用户点击按钮后再读取并解析数据
-    data_ready = False
     editable_df = st.data_editor(
-        st.session_state.path_table,
+        st.session_state["editable_df"],
         num_rows="dynamic",
         use_container_width=True,
         key="path_editor"
     )
     
     if st.button("加载上方路径表格为数据"):
-        st.session_state.path_table = editable_df.copy()
-        st.session_state["path_text"] = ""
-        data_ready = True
+        st.session_state["editable_df"] = editable_df.copy()
+        st.session_state["path_text"] = edited_df.copy()
         st.success("路径数据已加载！")
         st.rerun()
 
