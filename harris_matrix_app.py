@@ -44,7 +44,7 @@ else:
 
     st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
     if "path_table" not in st.session_state:
-        st.session_state.path_table = pd.DataFrame([["", ""]], columns=["Unit 1", "Unit 2"])
+        st.session_state.path_table = pd.DataFrame([["", ""]], columns=[f"Unit {i+1}" for i in range(6)])
 
     editable_df = st.data_editor(
         st.session_state.path_table,
@@ -110,9 +110,9 @@ if path_df is not None:
         st.subheader("地层关系查询")
         node_list = list(G.nodes)
 
-        if "unit1" not in st.session_state:
+        if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
-        if "unit2" not in st.session_state:
+        if "unit2" not in st.session_state or st.session_state.unit2 not in node_list:
             st.session_state.unit2 = node_list[min(1, len(node_list)-1)]
 
         try:
@@ -126,6 +126,8 @@ if path_df is not None:
         unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
         highlight_all = st.checkbox("高亮所有经过起点单位的地层关系")
 
+
+        
         def check_relation(u1, u2):
             if u2 is None:
                 return [], ""
