@@ -29,8 +29,11 @@ st.markdown("""
 """)
 
 # 示例数据
-example_df = pd.read_csv("新地里地层关系.csv", header=None, encoding="gbk")
-
+try:
+    example_df = pd.read_csv("新地里地层关系.csv", header=None, encoding="utf-8-sig")
+except UnicodeDecodeError:
+    example_df = pd.read_csv("新地里地层关系.csv", header=None, encoding="gbk")
+    
 # 选择数据源
 st.subheader("数据来源")
 data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件或在线填写地层关系"])
