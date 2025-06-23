@@ -54,9 +54,11 @@ if data_choice == "上传 CSV 文件或在线填写数据":
     ### 在线编辑地层关系表格
     或者你也可以直接在下方在线填写关系对：
     """)
+    # 初始设置只运行一次
     if "editable_df" not in st.session_state:
         st.session_state.editable_df = pd.DataFrame({"Later": [""], "Earlier": [""]})
     
+    # 允许用户编辑表格，限制为两列
     edited_df = st.data_editor(
         st.session_state.editable_df,
         column_config={
@@ -68,13 +70,14 @@ if data_choice == "上传 CSV 文件或在线填写数据":
         key="inline_editor"
     )
     
-    # 只更新指定列，防止异常列或格式污染
-    if all(col in edited_df.columns for col in ["Later", "Earlier"]):
-        st.session_state.editable_df = edited_df[["Later", "Earlier"]].copy()
+    # 只在内容有变化时更新状态
+    if not edited_df.equals(st.session_state.editable_df):
+        st.session_state.editable_df = edited_df.copy()
 
     if st.button("加载上方表格为数据"):
-        uploaded_file = None
         st.session_state.loaded_df = st.session_state.editable_df.copy()
+        st.success("数据已加载！")
+        uploaded_file = None
         st.rerun()
 else:
     uploaded_file = "新地里地层关系.csv"
@@ -84,9 +87,9 @@ node_size = st.sidebar.slider("节点大小", 500, 5000, 1300, step=100)
 font_size = st.sidebar.slider("字体大小", 6, 30, 16, step=1)
 arrow_width = st.sidebar.slider("箭头线条粗细", 0.5, 10.0, 1.5, step=0.5)
 
-if uploaded_file:
+if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
     try:
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file) if uploaded_file else st.session_state.loaded_df.copy()
         df.columns = df.columns.str.encode('utf-8').str.decode('utf-8-sig').str.strip().str.capitalize()
         if 'Later' not in df.columns or 'Earlier' not in df.columns:
             st.error("CSV 文件必须包含 'Later' 和 'Earlier' 两列")
