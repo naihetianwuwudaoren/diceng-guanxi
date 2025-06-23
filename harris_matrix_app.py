@@ -60,7 +60,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
     
     # 允许用户编辑表格，限制为两列
     edited_df = st.data_editor(
-        st.session_state.editable_df,
+        st.session_state["editable_df"],
         column_config={
             "Later": st.column_config.TextColumn("Later"),
             "Earlier": st.column_config.TextColumn("Earlier")
@@ -72,7 +72,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
     
     if st.button("加载上方表格为数据"):
         st.session_state.editable_df = edited_df.copy()
-        st.session_state.loaded_df = st.session_state.editable_df.copy()
+        st.session_state["loaded_df"] = edited_df.copy()
         st.success("数据已加载！")
         st.rerun()
 else:
