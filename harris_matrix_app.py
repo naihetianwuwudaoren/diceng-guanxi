@@ -253,7 +253,7 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
                     st.markdown(" → ".join(path))
 
             buf = BytesIO()
-            fig.savefig(buf, format="png", dpi=150, bbox_inches='tight')
+            fig.write_image(buf, format="png")
             buf.seek(0)
             st.download_button("📥下载为 PNG 图像", data=buf, file_name="harris_matrix.png", mime="image/png")
 
