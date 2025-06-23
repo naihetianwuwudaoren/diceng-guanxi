@@ -202,6 +202,10 @@ if uploaded_file:
     
             nx.draw_networkx_labels(G, pos, font_size= font_size, font_family=font_name, ax=ax)
             ax.axis('off')
+            if all_paths:
+                for path in all_paths:
+                    st.markdown(" → ".join(path))
+
             st.pyplot(fig)
             
             # 保存图像到内存
