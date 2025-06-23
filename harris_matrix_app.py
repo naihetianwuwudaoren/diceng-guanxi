@@ -111,7 +111,7 @@ if uploaded_file:
             fig_height = min(max(3, layer_spacing * len(layers)), 20)
             fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=narrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', ax=ax)
             nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', ax=ax)
 
             nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
