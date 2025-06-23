@@ -80,7 +80,7 @@ if uploaded_file:
                 st.warning("图中存在环，无法计算最长路径")
 
             unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
-            highlight_all = st.checkbox("✨高亮所有从起点出发的路径")
+            highlight_all = st.checkbox("✨高亮所有经过起点单位的路径")
 
             def check_relation(u1, u2):
                 if u2 is None:
@@ -93,10 +93,13 @@ if uploaded_file:
 
             if highlight_all:
                 all_paths, unit2 = [], None
-                for target in G.nodes:
-                    if target != unit1 and nx.has_path(G, unit1, target):
-                        all_paths.extend(list(nx.all_simple_paths(G, source=unit1, target=target)))
-                relation_text = f"所有从 {unit1} 出发的路径（共 {len(all_paths)} 条）"
+                for source in G.nodes:
+                    for target in G.nodes:
+                        if source != target and nx.has_path(G, source, target):
+                            for path in nx.all_simple_paths(G, source=source, target=target):
+                                if unit1 in path:
+                                    all_paths.append(path)
+                relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条）"
             else:
                 unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
                 all_paths, relation_text = check_relation(unit1, unit2)
@@ -111,8 +114,8 @@ if uploaded_file:
             fig_height = min(max(3, layer_spacing * len(layers)), 20)
             fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', ax=ax)
-            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=narrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=narrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', ax=ax)
 
             nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
             nx.draw_networkx_nodes(G, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
