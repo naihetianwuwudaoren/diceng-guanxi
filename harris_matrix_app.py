@@ -20,29 +20,36 @@ st.title("地层关系计算器")
 st.markdown("""
 ### 使用说明
 欢迎使用地层关系计算器^ ^！
-- 上传你的地层路径式 CSV 文件（每行表示一条地层路径，如 M86,M99,6层）。
+- 上传您的地层路径 CSV 文件，或者先用示例数据玩玩看。
 - 系统会自动转为节点关系图，图中单位节点大致按照地层早晚关系排布。
-- 支持查询两个单位的相对关系，或高亮所有经过某单位的路径。
+- 支持查询两个单位的相对关系，或高亮所有经过某单位的地层关系路径。
 - 左侧边栏可调节节点大小、字体和箭头粗细。
-- 支持图像下载。
-你也可以在下方通过表格填写路径：每行表示一条路径，列为依次单位。
+- 你也可以上传关系表格或在下方在线填写地层关系。
+- 祝您啃报告顺利！
 """)
 
 # 示例数据
 example_df = pd.read_csv("新地里地层关系.csv", header=None)
 
 # 选择数据源
-st.subheader("上传或填写路径数据")
-data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件或在线填写路径表格"])
+st.subheader("数据来源")
+data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件或在线填写地层关系"])
 
 uploaded_file = None
 path_df = None
 # ✅ 替换原有表格读取逻辑：仅在点击按钮并有有效数据后再加载
 data_ready = False
 if data_choice != "使用示例数据":
-    uploaded_file = st.file_uploader("上传 CSV 文件（每行一条路径，单位用逗号分隔，如 M86,M99,6层）", type="csv")
+    st.markdown("### 上传您的地层关系  /n
+    每行一条地层关系路径，单位用逗号分隔，如“M86,M99,6层”意为M86→M99→6层。  /n
+    不写表头，直接写地层关系。  /n
+    地层关系可以重叠交叉，可以全部串在一起写，也可以拆成一行一行碎的短路径，看您喜欢！ /n
+    左边晚，右边早。  /n
+    玩得开心！ ")
+    uploaded_file = st.file_uploader("上传 CSV 文件", type="csv")
 
-    st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
+    st.markdown("### 在线填写地层关系  /n
+    使用下方表格在线填写路径")
     if "path_table" not in st.session_state:
         st.session_state.path_table = pd.DataFrame(
             [["" for _ in range(6)]],
