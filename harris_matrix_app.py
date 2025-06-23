@@ -29,8 +29,8 @@ st.markdown("""
 
 # 选择数据源
 st.subheader("数据来源")
-data_choice = st.radio("请选择", ["使用示例数据", "上传 CSV 文件"])
-if data_choice == "上传 CSV 文件":
+data_choice = st.radio("请选择", ["使用示例数据", "上传 CSV 文件或在线填写数据"])
+if data_choice == "上传 CSV 文件或在线填写数据":
     st.markdown("""
     ### 使用说明
     
