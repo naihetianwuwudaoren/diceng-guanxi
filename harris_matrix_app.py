@@ -50,7 +50,7 @@ if data_choice != "使用示例数据":
     """)
     uploaded_file = st.file_uploader("上传 CSV 文件", type="csv")
 
-    st.markdown("### 在线填写地层关系  /n
+    st.markdown("""### 在线填写地层关系  /n
     使用下方表格在线填写路径""")
     if "path_table" not in st.session_state:
         st.session_state.path_table = pd.DataFrame(
