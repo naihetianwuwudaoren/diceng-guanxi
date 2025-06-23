@@ -142,13 +142,15 @@ if uploaded_file:
             
             # 路径查询函数
             def check_relation(u1, u2):
+                if u2 is None:
+                    return [], f"所有相关地层关系如下"
                 if nx.has_path(G, u1, u2):
                     return list(nx.all_simple_paths(G, source=u1, target=u2)), f"地层关系：{u1} 比 {u2} 更晚"
                 elif nx.has_path(G, u2, u1):
                     return list(nx.all_simple_paths(G, source=u2, target=u1)), f"地层关系：{u2} 比 {u1} 更晚"
                 else:
-                    return [], f"{u1} 和 {u2} 之间无地层早晚关系"
-    
+                    return [], f"{u1} 和 {u2} 之间无地层早晚关系"    
+                    
             # 执行查询
             all_paths, relation_text = check_relation(unit1, unit2)
             st.markdown(f"**{relation_text}**")
