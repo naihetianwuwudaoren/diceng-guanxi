@@ -94,6 +94,7 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
             G = nx.DiGraph()
             edges = list(zip(df['Later'], df['Earlier']))
             G.add_edges_from(edges)
+            G = nx.transitive_reduction(G)  # 去掉冗余边
 
             depths = {}
             for node in nx.topological_sort(G):
