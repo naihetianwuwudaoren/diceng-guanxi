@@ -3,13 +3,15 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
+from matplotlib.font_manager import FontProperties
 from io import BytesIO
 
-matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体支持中文
+chinese_font = FontProperties(fname="SimHei.ttf")
+matplotlib.rcParams['font.family'] = 'SimHei'  # 黑体
 
 # === Streamlit 页面设置 ===
 st.set_page_config(page_title="Harris Matrix Viewer", layout="wide")
-st.title("🧱 Harris Matrix 可视化与路径查询工具")
+st.title("地层关系查询工具")
 
 # === 数据选择：上传或使用示例 ===
 data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件"])
@@ -17,7 +19,7 @@ data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 C
 if data_choice == "上传 CSV 文件":
     uploaded_file = st.file_uploader("上传 CSV 文件（包含 Earlier 和 Later 列）", type="csv")
 else:
-    uploaded_file = "新地里地层关系.csv"  # 示例数据的路径（仓库根目录）
+    uploaded_file = "新地里地层关系.csv"  # 示例数据的路径
 
 st.sidebar.header("图形参数调节")
 node_size = st.sidebar.slider("节点大小", 500, 5000, 2000, step=100)
@@ -68,11 +70,11 @@ if uploaded_file:
             # 路径查询函数
             def check_relation(u1, u2):
                 if nx.has_path(G, u1, u2):
-                    return list(nx.all_simple_paths(G, source=u1, target=u2)), f"{u1} is earlier than {u2}"
+                    return list(nx.all_simple_paths(G, source=u1, target=u2)), f"{u1} 比 {u2} 更早"
                 elif nx.has_path(G, u2, u1):
-                    return list(nx.all_simple_paths(G, source=u2, target=u1)), f"{u2} is earlier than {u1}"
+                    return list(nx.all_simple_paths(G, source=u2, target=u1)), f"{u2} 比 {u1} 更早"
                 else:
-                    return [], f"{u1} 和 {u2} 之间无早晚关系"
+                    return [], f"{u1} 和 {u2} 之间无地层早晚关系"
     
             # 执行查询
             all_paths, relation_text = check_relation(unit1, unit2)
@@ -92,7 +94,7 @@ if uploaded_file:
             highlight_nodes = set()
             for path in all_paths:
                 highlight_nodes.update(path)
-            # 👇 强制加入用户查询的两个单位（即使无路径）
+            # 高亮用户查询的两个单位（即使无路径）
             highlight_nodes.update([unit1, unit2])
             
             # 画图
@@ -139,7 +141,7 @@ if uploaded_file:
                                 node_size=node_size + 200,
                                 ax=ax)
     
-            nx.draw_networkx_labels(G, pos, font_size= font_size, font_family='SimHei', ax=ax)
+            nx.draw_networkx_labels(G, pos, font_size= font_size, font_properties=chinese_font, ax=ax)
     
     
             ax.set_title("Harris Matrix 图（高亮路径）")
