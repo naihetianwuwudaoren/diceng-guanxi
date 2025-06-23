@@ -41,8 +41,8 @@ path_df = None
 data_ready = False
 if data_choice != "使用示例数据":
     st.markdown("""
-    ### 上传您的地层关系  \n
-    - 每行一条地层关系路径，单位用逗号分隔，如“M86,M99,6层”意为M86→M99→6层。
+    ### 上传您的地层关系CSV文件  \n
+    - 可以用excel写，存成CSV，每格一个单位，每行是一条地层关系路径，例如一行的一二三格分别是M86、M99、6层，意为M86→M99→6层。
     - 不写表头，直接写地层关系。
     - 地层关系可以重叠交叉，可以全部串在一起写，也可以拆成一行一行碎的短路径，看您喜欢！
     - 左边晚，右边早。
@@ -51,7 +51,7 @@ if data_choice != "使用示例数据":
     uploaded_file = st.file_uploader("上传 CSV 文件", type="csv")
 
     st.markdown("""### 在线填写地层关系  \n
-    使用下方表格在线填写路径""")
+    使用下方表格在线填写路径，每格一个单位，每行的左边格子晚，右边格子早""")
     if "path_table" not in st.session_state:
         st.session_state.path_table = pd.DataFrame(
             [["" for _ in range(6)]],
