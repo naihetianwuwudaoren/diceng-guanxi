@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
+matplotlib.use("Agg")
 
 # 设置默认字体
 font_path = "simhei.ttf"
@@ -167,8 +168,8 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
             fig_height = min(max(3, layer_spacing * len(layers)), 20)
             fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0.1', ax=ax)
-            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0.1', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=[e for e in G.edges if e not in highlight_edges], width=arrow_width, edge_color='gray', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0', ax=ax)
+            nx.draw_networkx_edges(G, pos, edgelist=list(highlight_edges), width=arrow_width+1.5, edge_color='red', arrows=True, arrowstyle='-|>', connectionstyle='arc3,rad=0', ax=ax)
 
             nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
             nx.draw_networkx_nodes(G, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
