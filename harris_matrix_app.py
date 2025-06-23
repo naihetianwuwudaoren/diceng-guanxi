@@ -4,6 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.font_manager import FontProperties
+from matplotlib import font_manager
 from io import BytesIO
 
 # 创建字体属性对象
