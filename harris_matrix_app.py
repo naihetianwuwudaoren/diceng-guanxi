@@ -117,7 +117,7 @@ if uploaded_file:
                 if st.button("📌 加载最长路径为查询节点"):
                     st.session_state.unit1 = longest_path[0]
                     st.session_state.unit2 = longest_path[-1]
-                    st.experimental_rerun()  # 强制刷新页面以更新下拉框显示
+                    st.rerun()  # 强制刷新页面以更新下拉框显示
             except nx.NetworkXUnfeasible:
                 st.warning("图中存在环，无法计算最长路径")
                 
