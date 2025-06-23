@@ -67,8 +67,8 @@ if uploaded_file:
     try:
         # 读取并标准化列名
         df = pd.read_csv(uploaded_file)
-        df.columns = df.columns.str.strip().str.capitalize()
-    
+        df.columns = df.columns.str.encode('utf-8').str.decode('utf-8-sig')  # 去除 BOM
+        df.columns = df.columns.str.strip().str.capitalize()  # 去空格并标准化大小写
         if 'Later' not in df.columns or 'Earlier' not in df.columns:
             st.error("CSV 文件必须包含 'Later' 和 'Earlier' 两列")
         else:
