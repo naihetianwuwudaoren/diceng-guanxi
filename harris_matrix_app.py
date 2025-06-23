@@ -66,7 +66,7 @@ if data_choice == "上传 CSV 文件或在线填写数据":
         use_container_width=True,
         key="inline_editor"
     )
-
+    st.session_state.editable_df = edited_df
     if st.button("加载上方表格为数据"):
         uploaded_file = None
         st.session_state.loaded_df = st.session_state.editable_df.copy()
