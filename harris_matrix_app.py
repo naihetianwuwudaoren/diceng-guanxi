@@ -123,7 +123,7 @@ if uploaded_file:
                 
             
             # 用户界面选择
-            unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1))
+            unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
 
             # 是否启用“从起点出发的所有路径”
             highlight_all_from_unit1 = st.checkbox("✨高亮所有从起点出发的路径")
@@ -139,7 +139,7 @@ if uploaded_file:
             else:
                 unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1))
 
-            unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2))
+            unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
 
             # 路径查询函数
             def check_relation(u1, u2):
