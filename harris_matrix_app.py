@@ -101,10 +101,14 @@ if uploaded_file:
             st.subheader("地层关系查询")
             
             # 初始化查询节点
-            if "unit1" not in st.session_state:
-                st.session_state.unit1 = node_list[0]
-            if "unit2" not in st.session_state:
-                st.session_state.unit2 = node_list[min(1, len(node_list)-1)]
+            if 'unit1' not in st.session_state:
+                st.session_state.unit1 = None
+            if 'unit2' not in st.session_state:
+                st.session_state.unit2 = None
+            
+            # 默认值设置
+            default_unit1 = st.session_state.unit1 or node_list[0]
+            default_unit2 = st.session_state.unit2 or node_list[min(1, len(node_list)-1)]
             
             # 用户界面选择
             unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1))
