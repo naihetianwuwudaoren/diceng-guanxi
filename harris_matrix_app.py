@@ -25,49 +25,62 @@ st.markdown("""
 - 支持查询两个单位的相对关系，或高亮所有经过某单位的路径。
 - 左侧边栏可调节节点大小、字体和箭头粗细。
 - 支持图像下载。
-你也可以在下方通过表格填写路径：每行表示一条路径，列依次填入单位。
+你也可以在下方通过表格填写路径：每行表示一条路径，列为依次单位。
 """)
 
+# 示例数据
+example_df = pd.read_csv("新地里地层关系.csv", header=None)
+
+# 选择数据源
 st.subheader("上传或填写路径数据")
-uploaded_file = st.file_uploader("上传 CSV 文件（每行一条路径，单位用逗号分隔，如 M86,M99,6层）", type="csv")
+data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件或在线填写路径表格"])
 
-st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
-if "path_table" not in st.session_state:
-    st.session_state.path_table = pd.DataFrame([["", ""]], columns=["Unit 1", "Unit 2"])
+uploaded_file = None
+path_df = None
+if data_choice == "使用示例数据":
+    path_df = example_df.copy()
+else:
+    uploaded_file = st.file_uploader("上传 CSV 文件（每行一条路径，单位用逗号分隔，如 M86,M99,6层）", type="csv")
 
-editable_df = st.data_editor(
-    st.session_state.path_table,
-    num_rows="dynamic",
-    use_container_width=True,
-    key="path_editor"
-)
+    st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
+    if "path_table" not in st.session_state:
+        st.session_state.path_table = pd.DataFrame([["", ""]], columns=["Unit 1", "Unit 2"])
 
-if st.button("加载上方路径表格为数据"):
-    st.session_state.path_table = editable_df.copy()
-    st.session_state["path_text"] = ""  # 清除旧文本输入
-    st.success("路径数据已加载！")
-    st.rerun()
+    editable_df = st.data_editor(
+        st.session_state.path_table,
+        num_rows="dynamic",
+        use_container_width=True,
+        key="path_editor"
+    )
+
+    if st.button("加载上方路径表格为数据"):
+        st.session_state.path_table = editable_df.copy()
+        st.session_state["path_text"] = ""
+        st.success("路径数据已加载！")
+        st.rerun()
+
+    if uploaded_file:
+        path_df = pd.read_csv(uploaded_file, header=None)
+    elif "path_table" in st.session_state:
+        path_df = st.session_state.path_table.copy()
+
+def parse_paths_from_df(df):
+    edge_list = []
+    for row in df.itertuples(index=False):
+        nodes = [str(cell).strip() for cell in row if pd.notna(cell) and str(cell).strip() != ""]
+        if len(nodes) < 2:
+            continue  # 跳过不足两个单位的路径，避免报错
+        edge_list.extend([(nodes[i], nodes[i+1]) for i in range(len(nodes) - 1)])
+    return edge_list
 
 st.sidebar.header("图形参数调节")
 node_size = st.sidebar.slider("节点大小", 500, 5000, 1300, step=100)
 font_size = st.sidebar.slider("字体大小", 6, 30, 16, step=1)
 arrow_width = st.sidebar.slider("箭头线条粗细", 0.5, 10.0, 1.5, step=0.5)
 
-def parse_paths_from_df(df):
-    edge_list = []
-    for row in df.itertuples(index=False):
-        nodes = [str(cell).strip() for cell in row if pd.notna(cell) and str(cell).strip() != ""]
-        edge_list.extend([(nodes[i], nodes[i+1]) for i in range(len(nodes) - 1)])
-    return edge_list
-
-if uploaded_file or ("path_table" in st.session_state and not st.session_state.path_table.dropna(how="all").empty):
+if path_df is not None:
     try:
-        if uploaded_file:
-            df = pd.read_csv(uploaded_file, header=None)
-            edges = parse_paths_from_df(df)
-        else:
-            edges = parse_paths_from_df(st.session_state.path_table)
-
+        edges = parse_paths_from_df(path_df)
         G = nx.DiGraph()
         G.add_edges_from(edges)
 
