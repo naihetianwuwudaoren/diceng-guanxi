@@ -69,7 +69,7 @@ if uploaded_file:
         df = pd.read_csv(uploaded_file)
         df.columns = df.columns.str.strip().str.capitalize()
     
-        if 'Earlier' not in df.columns or 'Later' not in df.columns:
+        if 'Later' not in df.columns or 'Earlier' not in df.columns:
             st.error("CSV 文件必须包含 'Later' 和 'Earlier' 两列")
         else:
             # 构建图
