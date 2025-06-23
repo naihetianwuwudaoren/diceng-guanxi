@@ -37,9 +37,9 @@ data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 C
 
 uploaded_file = None
 path_df = None
-if data_choice == "使用示例数据":
-    path_df = example_df.copy()
-else:
+# ✅ 替换原有表格读取逻辑：仅在点击按钮并有有效数据后再加载
+data_ready = False
+if data_choice != "使用示例数据":
     uploaded_file = st.file_uploader("上传 CSV 文件（每行一条路径，单位用逗号分隔，如 M86,M99,6层）", type="csv")
 
     st.markdown("或使用下方表格在线填写路径（每行一条路径，列为依次单位）")
@@ -50,22 +50,31 @@ else:
         )
 
     editable_df = st.data_editor(
-        st.session_state["editable_df"],
+        st.session_state.path_table,
         num_rows="dynamic",
         use_container_width=True,
         key="path_editor"
     )
-    
+
     if st.button("加载上方路径表格为数据"):
-        st.session_state["editable_df"] = editable_df.copy()
-        st.session_state["path_text"] = edited_df.copy()
-        st.success("路径数据已加载！")
-        st.rerun()
+        cleaned = editable_df.dropna(how="all")
+        if not cleaned.empty:
+            st.session_state.path_table = cleaned.copy()
+            data_ready = True
+            st.success("路径数据已加载！")
+            st.rerun()
+        else:
+            st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
 
     if uploaded_file:
         path_df = pd.read_csv(uploaded_file, header=None)
-    elif "path_table" in st.session_state:
+        data_ready = True
+    elif data_ready:
         path_df = st.session_state.path_table.copy()
+
+elif data_choice == "使用示例数据":
+    path_df = example_df.copy()
+    data_ready = True
 
 def parse_paths_from_df(df):
     edge_list = []
