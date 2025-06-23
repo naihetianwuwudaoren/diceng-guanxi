@@ -20,7 +20,23 @@ matplotlib.rcParams['font.family'] = font_name
 # === Streamlit 页面设置 ===
 st.set_page_config(page_title="Harris Matrix Viewer", layout="wide")
 st.title("地层关系查询工具")
+st.markdown("""
+### 🗂️ 使用说明
 
+欢迎使用地层关系查询工具！
+
+- 上传你的地层关系 CSV 文件，或使用示例数据（部分新地里墓地打破关系）。
+- 可视化图中每个节点代表一个单位，上面早下面晚。
+- 左侧边栏可调节图形大小、字体和箭头样式。
+- 支持高亮路径查询与图像下载。
+- 你的地层单位关系 CSV 文件第一行应写earlier和later，之后每行标注两个单位的关系，前面的叠压打破后面的，如：
+earlier, later
+M14, M19
+6层, M86
+M86, M99
+6层, 7层
+---
+""")
 # === 数据选择：上传或使用示例 ===
 data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 CSV 文件"])
 
