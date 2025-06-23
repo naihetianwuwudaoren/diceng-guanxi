@@ -128,19 +128,18 @@ if uploaded_file:
             # 是否启用“从起点出发的所有路径”
             highlight_all_from_unit1 = st.checkbox("✨高亮所有从起点出发的路径")
             
-            # 路径与终点设定
+              # 路径与终点设定
             if highlight_all_from_unit1:
                 all_paths = []
                 for target in G.nodes:
                     if target != unit1 and nx.has_path(G, unit1, target):
-                        all_paths.extend(nx.all_simple_paths(G, source=unit1, target=target))
+                        paths = list(nx.all_simple_paths(G, source=unit1, target=target))
+                        all_paths.extend(paths)
                 relation_text = f"所有从 {unit1} 出发的路径（共 {len(all_paths)} 条）"
                 unit2 = None  # 不设置终点
             else:
-                unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1))
-
-            unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
-
+                unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1), key="select_unit2")
+            
             # 路径查询函数
             def check_relation(u1, u2):
                 if nx.has_path(G, u1, u2):
