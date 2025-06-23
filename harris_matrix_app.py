@@ -153,9 +153,6 @@ if uploaded_file:
                                 ax=ax)
     
             nx.draw_networkx_labels(G, pos, font_size= font_size, font_family=font_name, ax=ax)
-    
-    
-            ax.set_title("Harris Matrix 图（高亮路径）", fontproperties=chinese_font)
             ax.axis('off')
             st.pyplot(fig)
             
