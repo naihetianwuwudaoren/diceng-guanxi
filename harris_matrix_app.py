@@ -99,10 +99,26 @@ if uploaded_file:
     
             # 选择要查询的两个节点
             st.subheader("地层关系查询")
-            node_list = list(G.nodes)
-            unit1 = st.selectbox("选择起点单位", node_list)
-            unit2 = st.selectbox("选择终点单位", node_list, index=min(1, len(node_list)-1))
-    
+            
+            # 初始化查询节点
+            if "unit1" not in st.session_state:
+                st.session_state.unit1 = node_list[0]
+            if "unit2" not in st.session_state:
+                st.session_state.unit2 = node_list[min(1, len(node_list)-1)]
+            
+            # 用户界面选择
+            unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1))
+            unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2))
+
+            # 尝试获取最长路径
+            try:
+                longest_path = nx.dag_longest_path(G)
+                if st.button("加载最长路径为查询节点"):
+                    unit1 = longest_path[0]
+                    unit2 = longest_path[-1]
+            except:
+                st.warning("图中存在环，无法计算最长路径")
+                
             # 路径查询函数
             def check_relation(u1, u2):
                 if nx.has_path(G, u1, u2):
