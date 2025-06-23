@@ -70,14 +70,10 @@ if data_choice == "上传 CSV 文件或在线填写数据":
         key="inline_editor"
     )
     
-    # 只在内容有变化时更新状态
-    if not edited_df.equals(st.session_state.editable_df):
-        st.session_state.editable_df = edited_df.copy()
-
     if st.button("加载上方表格为数据"):
+        st.session_state.editable_df = edited_df.copy()
         st.session_state.loaded_df = st.session_state.editable_df.copy()
         st.success("数据已加载！")
-        uploaded_file = None
         st.rerun()
 else:
     uploaded_file = "新地里地层关系.csv"
@@ -117,8 +113,12 @@ if uploaded_file is not None or st.session_state.get("loaded_df") is not None:
 
             st.subheader("地层关系查询")
             node_list = list(G.nodes)
-            st.session_state.unit1 = st.session_state.get("unit1", node_list[0])
-            st.session_state.unit2 = st.session_state.get("unit2", node_list[min(1, len(node_list)-1)])
+            
+            # 如果之前保存的 unit1 不在当前节点中，就重设
+            if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
+                st.session_state.unit1 = node_list[0]
+            if "unit2" not in st.session_state or st.session_state.unit2 not in node_list:
+                st.session_state.unit2 = node_list[min(1, len(node_list)-1)]
 
             try:
                 longest_path = nx.dag_longest_path(G)
