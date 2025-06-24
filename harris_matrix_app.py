@@ -276,7 +276,7 @@ if path_df is not None:
             
         highlight_nodes.discard(None)
         highlight_nodes &= set(G_draw.nodes)
-        
+        st.write("【调试】G_draw 节点列表：", list(G_draw.nodes())
         #尝试画klay布局
         elements = [
             {'data': {'id': n, 'label': n}, 'classes': 'highlight' if n in highlight_nodes else ''}
@@ -285,7 +285,39 @@ if path_df is not None:
             {'data': {'source': u, 'target': v}, 'classes': 'highlight' if (u, v) in highlight_edges else ''}
             for u, v in G_draw.edges()
         ]
-        
+        st.write("【调试】elements_json：", json.dumps(elements, ensure_ascii=False, indent=2))
+
+        st.write("--- 测试硬编码例子 ---")
+        html(
+    """
+    <div id="cy2" style="width:100%; height:300px; background:#f0f0f0; border:1px dashed blue;"></div>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
+    <script>
+      const cy2 = cytoscape({
+        container: document.getElementById('cy2'),
+        elements: [
+          { data: { id: 'A', label: 'A' } },
+          { data: { id: 'B', label: 'B' } },
+          { data: { id: 'C', label: 'C' } },
+          { data: { source: 'A', target: 'B' } },
+          { data: { source: 'B', target: 'C' } }
+        ],
+        style: [
+          { selector: 'node', style: { 'label':'data(label)', 'background-color':'#66c' } },
+          { selector: 'edge', style: { 'line-color':'#666', 'target-arrow-shape':'triangle' } }
+        ],
+        layout: {
+          name: 'klay',
+          klay: { nodeDimensionsIncludeLabels: true }
+        }
+      });
+    </script>
+    """,
+    height=360,
+    scrolling=True
+)
+            
         elements_json   = json.dumps(elements)
         stylesheet_json = json.dumps([
             {
