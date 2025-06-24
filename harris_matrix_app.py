@@ -8,15 +8,11 @@ from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
 matplotlib.use("Agg")
 
-# —— 安全加载 simhei.ttf —— 
-font_path = os.path.join(os.getcwd(), "simhei.ttf")  # 或者直接 "simhei.ttf"
-if os.path.exists(font_path):
-    try:
-        fontManager.addfont(font_path)
-        font_name = FontProperties(fname=font_path).get_name()
-        matplotlib.rcParams['font.family'] = font_name
-    except Exception:
-        pass  # 加载失败就用默认字体
+# 设置默认字体
+font_path = "simhei.ttf"
+fontManager.addfont(font_path)
+font_name = FontProperties(fname=font_path).get_name()
+matplotlib.rcParams['font.family'] = font_name
         
 
 # 页面设置
