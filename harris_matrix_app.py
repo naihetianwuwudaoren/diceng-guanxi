@@ -345,6 +345,15 @@ if path_df is not None:
             )
         ]
         # 3) 定义 Klay 布局参数
+        dagre_layout = {
+            "name": "dagre",
+            "rankDir": "TB",        # 从上到下
+            # 你还可以加 nodeSep, edgeSep, rankSep 等 dagre 特有参数：
+            "nodeSep": 50,
+            "edgeSep": 10,
+            "rankSep": 50,
+        }
+
         klay_layout = {
             "name": "klay",
             "klay": {
@@ -358,7 +367,7 @@ if path_df is not None:
         st.subheader("可交互视图（Klay 布局）")
         st_link_analysis(
             elements=elements,
-            layout=klay_layout,
+            layout=dagre_layout,
             node_styles=node_styles,
             edge_styles=edge_styles,
             height=700,
