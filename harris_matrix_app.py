@@ -182,7 +182,7 @@ if path_df is not None:
                 pos[node] = (x, y)
 
         st.subheader("地层关系查询")
-        
+        node_list = list(G_draw.nodes)
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
         if "unit2" not in st.session_state:
@@ -192,7 +192,7 @@ if path_df is not None:
             # 如果之前的 unit2 已不在子图里，也重置
             st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
 
-        node_list = list(G_draw.nodes)
+
 
 
         try:
