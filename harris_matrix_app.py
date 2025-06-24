@@ -269,9 +269,6 @@ if path_df is not None:
 
         st.markdown(f"**{relation_text}**")
         
-        fig_width = min(max(5, spacing * max(len(v) for v in layers.values())), 30)
-        fig_height = min(max(3, layer_spacing * len(layers)), 20)
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         
         highlight_edges = {(path[i], path[i+1]) for path in all_paths for i in range(len(path)-1)}
         highlight_nodes = {node for path in all_paths for node in path}
