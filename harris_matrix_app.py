@@ -149,11 +149,13 @@ if path_df is not None:
                     if selected:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
+                        st.rerun()
                     else:
                         st.warning("⚠️ 子图至少要包含一个有效单位")
             else:
                 if st.button("返回完整图"):
                     st.session_state.subgraph_mode = False
+                    st.rerun()
         
         # 选出当前要绘制的 Graph
         if st.session_state.subgraph_mode:
