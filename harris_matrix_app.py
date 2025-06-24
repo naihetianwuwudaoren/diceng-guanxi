@@ -290,10 +290,18 @@ if path_df is not None:
         st.write("--- 测试硬编码例子 ---")
         html(
     """
-    <div id="cy2" style="width:100%; height:300px; background:#f0f0f0; border:1px dashed blue;"></div>
+    <div id="cy2" style="width:100%; height:300px; background:#f0f0f0; border:1px dashed blue;">
+      如果你看不到节点，说明初始化还是没生效。
+    </div>
+    <!-- 加载 Cytoscape 核心 -->
     <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+    <!-- 加载 Klay 插件 -->
     <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
     <script>
+      // 【关键】先注册 Klay 插件
+      cytoscape.use(cytoscapeKlay);
+
+      // 然后再初始化 Cytoscape
       const cy2 = cytoscape({
         container: document.getElementById('cy2'),
         elements: [
@@ -312,10 +320,11 @@ if path_df is not None:
           klay: { nodeDimensionsIncludeLabels: true }
         }
       });
+      cy2.zoomingEnabled(true);
+      cy2.userZoomingEnabled(true);
     </script>
     """,
-    height=360,
-    scrolling=True
+    height=360, scrolling=True
 )
             
         elements_json   = json.dumps(elements)
