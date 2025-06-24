@@ -284,48 +284,45 @@ if path_df is not None:
  
             
         elements = [
-            {"data": {"id": n, "label": n}, "classes": "highlight" if n in highlight_nodes else ""}
+            {"data": {"id": n, "label": n}, "classes": "highlight"} if n in highlight_nodes
+            else {"data": {"id": n, "label": n}}
             for n in G_draw.nodes()
         ] + [
-            {"data": {"source": u, "target": v}, "classes": "highlight" if (u, v) in highlight_edges else ""}
+            {"data": {"source": u, "target": v}, "classes": "highlight"} if (u, v) in highlight_edges
+            else {"data": {"source": u, "target": v}}
             for u, v in G_draw.edges()
-        ]        
+        ]
         node_styles = [
-            NodeStyle(  # 默认节点样式
-                selector="node",
-                style={
-                    "label": "data(label)",
-                    "background-color": "#ADD8E6",
-                    "text-valign": "center",
-                    "text-halign": "center",
-                    "font-size": font_size,
-                }
-            ),
-            NodeStyle(  # highlight 节点
-                selector=".highlight",
-                style={
-                    "background-color": "orange"
-                }
-            ),
+            NodeStyle(
+                label=str(node),       # 匹配 data["label"] == node
+                color="#ADD8E6",       # 节点背景色
+                caption="label",       # 用 data["label"] 作为节点文字
+                icon=None
+            )
+            for node in G_draw.nodes()
+        ]
+        node_styles += [
+            NodeStyle(
+                label=str(node),
+                color="orange",
+                caption="label",
+                icon=None
+            )
+            for node in highlight_nodes
         ]
         edge_styles = [
-            EdgeStyle(  # 默认边
-                selector="edge",
-                style={
-                    "width": arrow_width,
-                    "line-color": "gray",
-                    "target-arrow-shape": "triangle",
-                    "target-arrow-color": "gray",
-                }
+            # 默认所有边灰色有向
+            EdgeStyle(
+                label="",             # 匹配所有边（data["label"] 你留空）
+                color="gray",         # 线条颜色
+                directed=True         # 显示箭头
             ),
-            EdgeStyle(  # highlight 边
-                selector=".highlight",
-                style={
-                    "line-color": "red",
-                    "target-arrow-color": "red",
-                    "width": arrow_width + 1.5,
-                }
-            ),
+            # 高亮的边
+            EdgeStyle(
+                label="",             
+                color="red",
+                directed=True
+            )
         ]
         # 3) 定义 Klay 布局参数
         klay_layout = {
