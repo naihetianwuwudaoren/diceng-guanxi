@@ -13,7 +13,6 @@ from st_link_analysis.component.layouts import LAYOUTS
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
 
-
 # 测试用的简易元素
 elements = [
   # 节点
@@ -50,18 +49,22 @@ snippet = f"""
 <script src="https://unpkg.com/cytoscape-klay@3.3.0/cytoscape-klay.js"></script>
 
 <script>
-  // 注意：插件的全局变量名可能是 cytoscapeKlay
-  cytoscape.use(Klay);
-
-  const cy = cytoscape({{
+  // 插件会在加载时自动注册到 cytoscape
+  const cy = cytoscape({
     container: document.getElementById('cy'),
-    elements: {elem_js},
-    layout: {layout_js},
-    style: [
-      {{ selector: 'node', style: {{ 'label': 'data(label)', 'background-color': '#0074D9' }} }},
-      {{ selector: 'edge', style: {{ 'width': 2, 'line-color': '#999', 'target-arrow-shape': 'triangle' }} }}
-    ]
-  }});
+    elements: ELEMENTS_JSON,
+    style: STYLESHEET_JSON,
+    layout: {
+      name: 'klay',
+      klay: {
+        nodeDimensionsIncludeLabels: true,
+        spacing: 50,
+        edgeRouting: 'ORTHOGONAL',
+        orientation: 'DOWN',
+        // …更多 Klay 参数
+      }
+    }
+  });
 </script>
 """
 
