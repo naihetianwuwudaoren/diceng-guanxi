@@ -180,12 +180,7 @@ if path_df is not None:
                 pos[node] = (x, y)
                     
         node_list = list(G_draw.nodes)
-            
-        fig_width = min(max(5, spacing * max(len(v) for v in layers.values())), 30)
-        fig_height = min(max(3, layer_spacing * len(layers)), 20)
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-        highlight_edges = set()
-        highlight_nodes = set()    
+
             
         st.subheader("地层关系查询")
 
@@ -211,21 +206,20 @@ if path_df is not None:
         # 构造带“空”选项的列表
         empty_label = "-- 请选择 --"
         unit_options = [empty_label] + list(G_draw.nodes)
-        
         unit1 = st.selectbox("选择起点单位", options=unit_options, index=0, key="select_unit1")
         # 把空标签映射回 None
         if unit1 == empty_label:
-            unit1 = None
+            unit1 = None            
             
-        if unit1 is None:
-            st.info("请先选择起点单位")
-            st.stop()
-            
-
         if st.button("查询起点单位相关地层关系"):
             st.session_state.show_relation = True
-        highlight_all = st.session_state.show_relation
-
+        highlight_all = st.session_state.get("show_relation", False)
+        
+        unit2 = st.selectbox("选择终点单位", options=unit_options, index=0, key="select_unit2")
+        if unit2 == empty_label:
+            unit2 = None
+        all_paths, relation_text = [], ""
+        
         def check_relation(u1, u2):
             if u2 is None:
                 return [], ""
@@ -235,7 +229,7 @@ if path_df is not None:
                 return list(nx.all_simple_paths(G_draw, source=u2, target=u1)), f"地层关系：{u2} 比 {u1} 更晚"
             return [], f"{u1} 和 {u2} 之间无地层早晚关系"
 
-        if highlight_all:
+        if highlight_all and unit1:
             all_paths, unit2 = [], None
             # 计算和 unit1 的三类关系
             earlier_units   = list(nx.descendants(G_draw, unit1))   # unit1 -> x 即 x 比 unit1 更早
@@ -286,24 +280,18 @@ if path_df is not None:
                                     seen.add(t)
             all_paths = list(seen)
             relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条）"
-        else:
-            unit2 = st.selectbox("选择终点单位", options=unit_options, index=0, key="select_unit2")
-            if unit2 == empty_label:
-                unit2 = None
-            if unit1 is None:
-                st.info("请先选择起点单位")
-                st.stop()
+        elif unit1 and unit2:
             all_paths, relation_text = check_relation(unit1, unit2)
 
         st.markdown(f"**{relation_text}**")
-
-        highlight_edges = {(path[i], path[i+1]) for path in all_paths for i in range(len(path)-1)}
-        highlight_nodes = {node for path in all_paths for node in path}
-        highlight_nodes.update([unit1] + ([unit2] if unit2 else []))
-
+        
         fig_width = min(max(5, spacing * max(len(v) for v in layers.values())), 30)
         fig_height = min(max(3, layer_spacing * len(layers)), 20)
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+        
+        highlight_edges = {(path[i], path[i+1]) for path in all_paths for i in range(len(path)-1)}
+        highlight_nodes = {node for path in all_paths for node in path}
+        highlight_nodes.update([unit1] + ([unit2] if unit2 else []))
 
         for (u, v) in G_draw.edges:
             is_highlight = (u, v) in highlight_edges
