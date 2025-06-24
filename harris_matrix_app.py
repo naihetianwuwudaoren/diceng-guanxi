@@ -208,6 +208,11 @@ if path_df is not None:
         # 把空标签映射回 None
         if unit1 == empty_label:
             unit1 = None
+            
+        if unit1 is None:
+            st.info("请先选择起点单位")
+            st.stop()
+            
 
         if st.button("查询起点单位相关地层关系"):
             st.session_state.show_relation = True
@@ -277,6 +282,9 @@ if path_df is not None:
             unit2 = st.selectbox("选择终点单位", options=unit_options, index=0, key="select_unit2")
             if unit2 == empty_label:
                 unit2 = None
+            if unit1 is None:
+                st.info("请先选择起点单位")
+                st.stop()
             all_paths, relation_text = check_relation(unit1, unit2)
 
         st.markdown(f"**{relation_text}**")
