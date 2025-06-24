@@ -188,7 +188,7 @@ if path_df is not None:
             st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
 
         try:
-            longest_path = nx.dag_longest_path(G)
+            longest_path = nx.dag_longest_path(G_draw)
             if st.button("加载最长的一组叠压打破关系"):
                 st.session_state.unit1, st.session_state.unit2 = longest_path[0], longest_path[-1]
                 st.rerun()
@@ -202,23 +202,24 @@ if path_df is not None:
             st.session_state.unit1 = node_list[0]
         
         unit1 = st.selectbox("选择起点单位", node_list, index=default_idx, key="select_unit1")
+        highlight_all = st.checkbox("查询起点单位相关地层关系", key="highlight_all")
 
         def check_relation(u1, u2):
             if u2 is None:
                 return [], ""
-            if nx.has_path(G, u1, u2):
-                return list(nx.all_simple_paths(G, source=u1, target=u2)), f"地层关系：{u1} 比 {u2} 更晚"
-            elif nx.has_path(G, u2, u1):
-                return list(nx.all_simple_paths(G, source=u2, target=u1)), f"地层关系：{u2} 比 {u1} 更晚"
+            if nx.has_path(G_draw, u1, u2):
+                return list(nx.all_simple_paths(G_draw, source=u1, target=u2)), f"地层关系：{u1} 比 {u2} 更晚"
+            elif nx.has_path(G_draw, u2, u1):
+                return list(nx.all_simple_paths(G_draw, source=u2, target=u1)), f"地层关系：{u2} 比 {u1} 更晚"
             return [], f"{u1} 和 {u2} 之间无地层早晚关系"
 
         if highlight_all:
             all_paths, unit2 = [], None
             # 计算和 unit1 的三类关系
-            earlier_units   = list(nx.descendants(G, unit1))   # unit1 -> x 即 x 比 unit1 更早
-            later_units     = list(nx.ancestors(G, unit1))     # x -> unit1 即 x 比 unit1 更晚
+            earlier_units   = list(nx.descendants(G_draw, unit1))   # unit1 -> x 即 x 比 unit1 更早
+            later_units     = list(nx.ancestors(G_draw, unit1))     # x -> unit1 即 x 比 unit1 更晚
             unrelated_units = [
-                n for n in G.nodes 
+                n for n in G_draw.nodes 
                 if n not in earlier_units 
                 and n not in later_units 
                 and n != unit1
@@ -234,10 +235,10 @@ if path_df is not None:
             col3.write("、".join(unrelated_units) if unrelated_units else "无")
             
             seen = set()
-            for source in G.nodes:
-                for target in G.nodes:
-                    if source != target and nx.has_path(G, source, target):
-                        for path in nx.all_simple_paths(G, source=source, target=target):
+            for source in G_draw.nodes:
+                for target in G_draw.nodes:
+                    if source != target and nx.has_path(G_draw, source, target):
+                        for path in nx.all_simple_paths(G_draw, source=source, target=target):
                             if unit1 in path:
                                 t = tuple(path)
                                 if not any(set(t).issubset(set(p)) for p in seen):
@@ -258,7 +259,7 @@ if path_df is not None:
         fig_height = min(max(3, layer_spacing * len(layers)), 20)
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-        for (u, v) in G.edges:
+        for (u, v) in G_draw.edges:
             is_highlight = (u, v) in highlight_edges
             color = 'red' if is_highlight else 'gray'
             width = arrow_width + 1.5 if is_highlight else arrow_width
@@ -277,9 +278,9 @@ if path_df is not None:
                 )
             )
 
-        nx.draw_networkx_nodes(G, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
-        nx.draw_networkx_nodes(G, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
-        nx.draw_networkx_labels(G, pos, font_size=font_size, font_family=font_name, ax=ax)
+        nx.draw_networkx_nodes(G_draw, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
+        nx.draw_networkx_nodes(G_draw, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
+        nx.draw_networkx_labels(G_draw, pos, font_size=font_size, font_family=font_name, ax=ax)
         ax.axis('off')
 
         st.pyplot(fig)
