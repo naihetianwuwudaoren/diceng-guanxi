@@ -150,25 +150,6 @@ if path_df is not None:
         unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
         highlight_all = st.checkbox("查询起点单位相关地层关系")
 
-        # 计算和 unit1 的三类关系
-        earlier_units   = list(nx.descendants(G, unit1))   # unit1 -> x 即 x 比 unit1 更早
-        later_units     = list(nx.ancestors(G, unit1))     # x -> unit1 即 x 比 unit1 更晚
-        unrelated_units = [
-            n for n in G.nodes 
-            if n not in earlier_units 
-            and n not in later_units 
-            and n != unit1
-        ]
-        
-        # 三列布局展示
-        col1, col2, col3 = st.columns(3)
-        col1.subheader("更早的单位")
-        col1.write("、".join(earlier_units) if earlier_units else "无")
-        col2.subheader("更晚的单位")
-        col2.write("、".join(later_units)   if later_units   else "无")
-        col3.subheader("无直接关系的单位")
-        col3.write("、".join(unrelated_units) if unrelated_units else "无")
-        
         def check_relation(u1, u2):
             if u2 is None:
                 return [], ""
@@ -180,6 +161,25 @@ if path_df is not None:
 
         if highlight_all:
             all_paths, unit2 = [], None
+            # 计算和 unit1 的三类关系
+            earlier_units   = list(nx.descendants(G, unit1))   # unit1 -> x 即 x 比 unit1 更早
+            later_units     = list(nx.ancestors(G, unit1))     # x -> unit1 即 x 比 unit1 更晚
+            unrelated_units = [
+                n for n in G.nodes 
+                if n not in earlier_units 
+                and n not in later_units 
+                and n != unit1
+            ]
+            
+            # 三列布局展示
+            col1, col2, col3 = st.columns(3)
+            col1.subheader(f"比 {unit1} 更早的单位")
+            col1.write("、".join(earlier_units) if earlier_units else "无")
+            col2.subheader(f"比 {unit1} 更晚的单位")
+            col2.write("、".join(later_units)   if later_units   else "无")
+            col3.subheader(f"与 {unit1} 无直接关系的单位")
+            col3.write("、".join(unrelated_units) if unrelated_units else "无")
+            
             seen = set()
             for source in G.nodes:
                 for target in G.nodes:
