@@ -289,25 +289,43 @@ if path_df is not None:
             {"data": {"source": u, "target": v}, "classes": "highlight" if (u, v) in highlight_edges else ""}
             for u, v in G_draw.edges()
         ]        
-        node_styles = {
-            "label": "data(label)",
-            "background-color": "#ADD8E6",
-            "text-valign": "center",
-            "text-halign": "center",
-            "font-size": font_size,
-        }
-        edge_styles = {
-            "width": arrow_width,
-            "line-color": "gray",
-            "target-arrow-shape": "triangle",
-            "target-arrow-color": "gray",
-        }
-        highlight_styles = {
-            "background-color": "orange",
-            "line-color": "red",
-            "target-arrow-color": "red",
-            "width": arrow_width + 1.5,
-        }
+        node_styles = [
+            NodeStyle(  # 默认节点样式
+                selector="node",
+                style={
+                    "label": "data(label)",
+                    "background-color": "#ADD8E6",
+                    "text-valign": "center",
+                    "text-halign": "center",
+                    "font-size": font_size,
+                }
+            ),
+            NodeStyle(  # highlight 节点
+                selector=".highlight",
+                style={
+                    "background-color": "orange"
+                }
+            ),
+        ]
+        edge_styles = [
+            EdgeStyle(  # 默认边
+                selector="edge",
+                style={
+                    "width": arrow_width,
+                    "line-color": "gray",
+                    "target-arrow-shape": "triangle",
+                    "target-arrow-color": "gray",
+                }
+            ),
+            EdgeStyle(  # highlight 边
+                selector=".highlight",
+                style={
+                    "line-color": "red",
+                    "target-arrow-color": "red",
+                    "width": arrow_width + 1.5,
+                }
+            ),
+        ]
         # 3) 定义 Klay 布局参数
         klay_layout = {
             "name": "klay",
@@ -325,7 +343,6 @@ if path_df is not None:
             layout=klay_layout,
             node_styles=node_styles,
             edge_styles=edge_styles,
-            highlight_styles=highlight_styles,
             height=700,
             key="harris-graph"
         )
