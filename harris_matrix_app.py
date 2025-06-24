@@ -10,7 +10,8 @@ from streamlit.components.v1 import html
 import inspect
 from st_link_analysis import st_link_analysis
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
-
+st.write("NodeStyle 签名：", inspect.signature(NodeStyle))
+st.stop()   # 打印后就停，不再往下执行
 # 设置默认字体
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
