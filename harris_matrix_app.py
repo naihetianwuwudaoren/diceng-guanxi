@@ -339,24 +339,19 @@ if path_df is not None:
         stylesheet_json = json.dumps(stylesheet)
         layout_json     = json.dumps(layout)
             
-        # 2) 读取本地的 JS 文件   
-        cyto_js = open("cytoscape.min.js", "r", encoding="utf-8").read()
-        klay_js  = open("cytoscape-klay.js",  "r", encoding="utf-8").read()
-
         # 3) 拼一段 HTML + JS
         snippet = f"""
         <div id="cy" style="width:100%; height:700px;"></div>
         
-        <script>
-        {cyto_js}
-        </script>
+        <!-- Cytoscape 核心 -->
+        <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+        <!-- Klay 插件 -->
+        <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
         
         <script>
-        {klay_js}
-        </script>
-        
-        <script>
-          cytoscape.use(Klay);
+          // 注册 Klay 插件
+          cytoscape.use(klay);
+
           const cy = cytoscape({{
             container: document.getElementById('cy'),
             elements: {elements_json},
