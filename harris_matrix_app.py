@@ -199,14 +199,15 @@ if path_df is not None:
                 st.rerun()
         except nx.NetworkXUnfeasible:
             st.warning("图中存在环，无法计算最长路径")
-
-        try:
-            default_idx = node_list.index(st.session_state.unit1)
-        except ValueError:
-            default_idx = 0
-            st.session_state.unit1 = node_list[0]
+            
+        # 构造带“空”选项的列表
+        empty_label = "-- 请选择 --"
+        unit_options = [empty_label] + list(G_draw.nodes)
         
-        unit1 = st.selectbox("选择起点单位", node_list, index=default_idx, key="select_unit1")
+        unit1 = st.selectbox("选择起点单位", options=unit_options, index=0, key="select_unit1")
+        # 把空标签映射回 None
+        if unit1 == empty_label:
+            unit1 = None
 
         if st.button("查询起点单位相关地层关系"):
             st.session_state.show_relation = True
@@ -273,7 +274,9 @@ if path_df is not None:
             all_paths = list(seen)
             relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条）"
         else:
-            unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
+            unit2 = st.selectbox("选择终点单位", options=unit_options, index=0, key="select_unit2")
+            if unit2 == empty_label:
+                unit2 = None
             all_paths, relation_text = check_relation(unit1, unit2)
 
         st.markdown(f"**{relation_text}**")
