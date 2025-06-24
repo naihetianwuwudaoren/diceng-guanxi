@@ -132,7 +132,8 @@ if path_df is not None:
                     # 从 session_state 拿原始字符串
                     raw = st.session_state.sub_input  
                     # 拆分、strip，并且只保留 G.nodes 里真的存在的
-                    candidates = [u.strip() for u in raw.split('、') if u.strip()]
+                    normalized = raw.replace('、', ',').replace('，', ',')
+                    candidates = [u.strip() for u in raw.split(',') if u.strip()]
                     selected  = [u for u in candidates if u in G.nodes]
                     # 调试输出（可删）
                     st.write("输入拆分：", candidates)
