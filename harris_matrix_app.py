@@ -141,7 +141,7 @@ if path_df is not None:
 
         try:
             longest_path = nx.dag_longest_path(G)
-            if st.button("加载最典型的一组叠压打破关系"):
+            if st.button("加载最长的一组叠压打破关系"):
                 st.session_state.unit1, st.session_state.unit2 = longest_path[0], longest_path[-1]
                 st.rerun()
         except nx.NetworkXUnfeasible:
@@ -168,7 +168,6 @@ if path_df is not None:
         col2.write("、".join(later_units)   if later_units   else "无")
         col3.subheader("无直接关系的单位")
         col3.write("、".join(unrelated_units) if unrelated_units else "无")
-        # ——插入结束——
         
         def check_relation(u1, u2):
             if u2 is None:
@@ -191,7 +190,7 @@ if path_df is not None:
                                 if not any(set(t).issubset(set(p)) for p in seen):
                                     seen.add(t)
             all_paths = list(seen)
-            relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条，已去除包含关系）"
+            relation_text = f"所有经过 {unit1} 的路径（共 {len(all_paths)} 条）"
         else:
             unit2 = st.selectbox("选择终点单位", node_list, index=node_list.index(st.session_state.unit2), key="select_unit2")
             all_paths, relation_text = check_relation(unit1, unit2)
