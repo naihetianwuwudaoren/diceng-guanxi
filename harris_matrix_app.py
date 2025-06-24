@@ -7,16 +7,15 @@ from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
 matplotlib.use("Agg")
 
-# —— 安全加载字体，失败直接跳过 —— 
-font_path = os.path.join(os.path.dirname(__file__), "simhei.ttf")
+# —— 安全加载 simhei.ttf —— 
+font_path = "simhei.ttf"  # 或者 os.path.join(os.getcwd(), "simhei.ttf")
 if os.path.exists(font_path):
     try:
         fontManager.addfont(font_path)
         font_name = FontProperties(fname=font_path).get_name()
         matplotlib.rcParams['font.family'] = font_name
     except Exception:
-        # 失败时什么都不做，继续用默认字体
-        pass
+        pass  # 加载失败就忽略
         
 
 # 页面设置
