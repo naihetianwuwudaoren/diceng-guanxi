@@ -12,66 +12,102 @@ from st_link_analysis import st_link_analysis
 from st_link_analysis.component.layouts import LAYOUTS
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
+st.title("Cytoscape.js + Klay 布局测试")
 
-# 测试用的简易元素
+# — 1) 构造测试用元素 —
 elements = [
-  # 节点
-  {'data': {'id': 'A', 'label': 'A'}},
-  {'data': {'id': 'B', 'label': 'B'}},
-  {'data': {'id': 'C', 'label': 'C'}},
-  # 边
-  {'data': {'id': 'A__B', 'source': 'A', 'target': 'B'}},
-  {'data': {'id': 'A__C', 'source': 'A', 'target': 'C'}},
+    # 三个节点
+    {"data": {"id": "A", "label": "节点 A"}},
+    {"data": {"id": "B", "label": "节点 B"}},
+    {"data": {"id": "C", "label": "节点 C"}},
+    # 两条边
+    {"data": {"id": "A__B", "source": "A", "target": "B"}},
+    {"data": {"id": "A__C", "source": "A", "target": "C"}}
 ]
 
-# JSON 序列化
-elem_js = json.dumps(elements)
+# — 2) 定义样式数组（这里就替代了你之前的 stylesheet）—
+style = [
+    {
+        "selector": "node",
+        "style": {
+            "label": "data(label)",
+            "font-size": "16px",            # 字体放大
+            "text-valign": "center",
+            "text-halign": "center",
+            "background-color": "#ADD8E6",
+            "width": "40px",
+            "height": "40px"
+        }
+    },
+    {
+        "selector": "edge",
+        "style": {
+            "width": 2,
+            "line-color": "gray",
+            "target-arrow-shape": "triangle",
+            "target-arrow-color": "gray"
+        }
+    },
+    {
+        "selector": ".highlight",
+        "style": {
+            "background-color": "orange",
+            "line-color": "red",
+            "target-arrow-color": "red",
+            "width": 4
+        }
+    }
+]
 
-# Klay 布局参数
+# — 3) 定义 Klay 布局参数 —
 layout = {
-  'name': 'klay',
-  'klay': {
-    'nodeDimensionsIncludeLabels': True,
-    'spacing': 50,
-    'edgeSpacingFactor': 0.2,
-    'orientation': 'DOWN',
-    'layering': 'INTERACTIVE'
-  }
+    "name": "klay",
+    "klay": {
+        "nodeDimensionsIncludeLabels": True,
+        "spacing": 50,
+        "edgeSpacingFactor": 0.2,
+        "orientation": "DOWN",
+        "layering": "INTERACTIVE"
+    }
 }
-layout_js = json.dumps(layout)
 
-snippet = f"""
-<div id="cy" style="width:100%; height:400px;"></div>
+# 转成 JSON 字符串，方便插入到 HTML 里
+elements_js = json.dumps(elements)
+style_js    = json.dumps(style)
+layout_js   = json.dumps(layout)
+
+# — 4) 拼 HTML + JS，方案 A：直接引入脚本，无需 cytoscape.use() —
+snippet = """
+<div id="cy" style="width:100%; height:500px;"></div>
 
 <!-- 1) Cytoscape.js 核心 -->
 <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
 <!-- 2) Klay 插件 -->
-<script src="https://unpkg.com/cytoscape-klay@3.3.0/cytoscape-klay.js"></script>
+<script src="https://unpkg.com/cytoscape-klay@3.3.0/dist/cytoscape-klay.js"></script>
 
 <script>
-  // 插件会在加载时自动注册到 cytoscape
-  const cy = cytoscape({
+(function() {{
+  const elements = {elements};
+  const style    = {style};
+  const layout   = {layout};
+
+  // 插件加载后自动注册
+  const cy = cytoscape({{
     container: document.getElementById('cy'),
-    elements: ELEMENTS_JSON,
-    style: STYLESHEET_JSON,
-    layout: {
-      name: 'klay',
-      klay: {
-        nodeDimensionsIncludeLabels: true,
-        spacing: 50,
-        edgeRouting: 'ORTHOGONAL',
-        orientation: 'DOWN',
-        // …更多 Klay 参数
-      }
-    }
-  });
+    elements: elements,
+    style:    style,
+    layout:   layout
+  }});
+
+  cy.zoomingEnabled(true);
+  cy.userZoomingEnabled(true);
+}})();
 </script>
-"""
+""".format(elements=elements_js, style=style_js, layout=layout_js)
 
-st.markdown("### 测试 Klay 布局能否渲染")
-html(snippet, height=420, scrolling=False)
-
-
+# 渲染
+st.markdown("### Klay 布局演示")
+html(snippet, height=520, scrolling=False)
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
 font_name = FontProperties(fname=font_path).get_name()
