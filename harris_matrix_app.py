@@ -118,8 +118,8 @@ if path_df is not None:
         col_input, col_toggle = st.columns([4,1])
         with col_input:
             sub_input = st.text_input(
-                "🗒️ 请输入要生成子图的单位（用逗号分隔）", 
-                value=",".join(st.session_state.get('sub_nodes', []))
+                "请输入要生成子图的单位（用顿号“、”分隔）", 
+                value="、".join(st.session_state.get('sub_nodes', []))
             )
         with col_toggle:
             if not st.session_state.subgraph_mode:
