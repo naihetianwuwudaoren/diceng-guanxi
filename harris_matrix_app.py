@@ -9,8 +9,8 @@ import json
 from streamlit.components.v1 import html
 import inspect
 from st_link_analysis import st_link_analysis
-st.write(inspect.signature(st_link_analysis))
-st.stop()
+
+
 # 设置默认字体
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
