@@ -286,7 +286,7 @@ if path_df is not None:
         ] + [
             {"data": {"source": u, "target": v}, "classes": "highlight" if (u, v) in highlight_edges else ""}
             for u, v in G_draw.edges()
-                
+        ]        
         node_styles = {
             "label": "data(label)",
             "background-color": "#ADD8E6",
