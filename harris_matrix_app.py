@@ -279,7 +279,7 @@ if path_df is not None:
         
         #尝试画klay布局
         elements = []
-        for n in G_draw.edges:
+        for n in G_draw.nodes:
             elements.append({
                 'data': {'id': n, 'label': n},
                 'classes': 'highlight' if n in highlight_nodes else ''
