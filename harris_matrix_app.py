@@ -349,9 +349,6 @@ if path_df is not None:
         <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
         
         <script>
-          // 注册 Klay 插件
-          cytoscape.use(klay);
-
           const cy = cytoscape({{
             container: document.getElementById('cy'),
             elements: {elements_json},
