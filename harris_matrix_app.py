@@ -12,6 +12,44 @@ from st_link_analysis import st_link_analysis
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
 
+# 先造一个极简的 test 元素（2 个节点 + 1 条边）
+elements = {
+    "nodes": [
+        {"data": {"id": "A", "label": "A"}},
+        {"data": {"id": "B", "label": "B"}},
+    ],
+    "edges": [
+        {"data": {"id": "A__B", "source": "A", "target": "B"}},
+    ]
+}
+
+# 常见内置布局名
+candidates = [
+    "grid",
+    "random",
+    "circle",
+    "concentric",
+    "breadthfirst",
+    "cose",
+    "preset",
+]
+
+supported = []
+for name in candidates:
+    try:
+        st_link_analysis(
+            elements=elements,
+            layout={"name": name},
+            height=200,
+            key=f"test_{name}"
+        )
+        supported.append(name)
+    except Exception:
+        # 布局名不支持就会抛
+        pass
+
+st.write("✅ 支持的布局有：", supported)
+
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
 font_name = FontProperties(fname=font_path).get_name()
