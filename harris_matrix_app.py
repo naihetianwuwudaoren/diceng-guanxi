@@ -281,69 +281,77 @@ if path_df is not None:
         highlight_nodes &= set(G_draw.nodes)
         st.write("【调试】G_draw 节点列表：", list(G_draw.nodes()))
  
+        # — 1) 构造 elements —
+        # nodes 列表
         nodes = []
         for n in G_draw.nodes():
-            # data 里要有 id, label
-            node_data = {"id": n, "label": n}
-            # 如果在高亮集合里，就在 classes 里标记 "highlight"
+            nd = {"data": {"id": n, "label": n}}
             if n in highlight_nodes:
-                nodes.append({"data": node_data, "classes": "highlight"})
-            else:
-                nodes.append({"data": node_data})
+                nd["classes"] = "highlight"
+            nodes.append(nd)
         
-        # 2) 构造 edges 列表
+        # edges 列表
         edges = []
         for u, v in G_draw.edges():
-            # 给每条边一个唯一 id
             edge_id = f"{u}__{v}"
-            edge_data = {
-                "id": edge_id,
-                "source": u,
-                "target": v,
-                "label": ""   # 如果想在边上显示文字，可以填入这里
+            ed = {
+                "data": {
+                    "id": edge_id,
+                    "source": u,
+                    "target": v,
+                    # 我们这里不在边上显示文字，label 先留空
+                    "label": ""
+                }
             }
             if (u, v) in highlight_edges:
-                edges.append({"data": edge_data, "classes": "highlight"})
-            else:
-                edges.append({"data": edge_data})
+                ed["classes"] = "highlight"
+            edges.append(ed)
         
-        # 3) 打包成 elements 字典
-        elements = {
-            "nodes": nodes,
-            "edges": edges
-        }
-        node_styles = [
-            NodeStyle(
-                label=str(node),       # 匹配 data["label"] == node
-                color="#ADD8E6",       # 节点背景色
-                caption="label",       # 用 data["label"] 作为节点文字
+        elements = {"nodes": nodes, "edges": edges}
+        
+        
+        # — 2) 构造 NodeStyle 和 EdgeStyle —
+        # NodeStyle(label, color, caption=None, icon=None)
+        node_styles = []
+        # 默认所有节点
+        for n in G_draw.nodes():
+            node_styles.append(NodeStyle(
+                label=n,
+                color="#ADD8E6",    # 浅蓝
+                caption=None,
                 icon=None
-            )
-            for node in G_draw.nodes()
-        ]
-        node_styles += [
-            NodeStyle(
-                label=str(node),
+            ))
+        # 再覆盖高亮节点
+        for n in highlight_nodes:
+            node_styles.append(NodeStyle(
+                label=n,
                 color="orange",
-                caption="label",
+                caption=None,
                 icon=None
-            )
-            for node in highlight_nodes
-        ]
-        edge_styles = [
-            # 默认所有边灰色有向
-            EdgeStyle(
-                label="",             # 匹配所有边（data["label"] 你留空）
-                color="gray",         # 线条颜色
-                directed=True         # 显示箭头
-            ),
-            # 高亮的边
-            EdgeStyle(
-                label="",             
-                color="red",
+            ))
+        
+        # EdgeStyle(label, color, caption=None, icon=None, directed=False)
+        edge_styles = []
+        # 默认所有边灰色有向
+        for u, v in G_draw.edges():
+            eid = f"{u}__{v}"
+            edge_styles.append(EdgeStyle(
+                label=eid,
+                color="gray",
+                caption=None,
+                icon=None,
                 directed=True
-            )
-        ]
+            ))
+        # 高亮的边
+        for u, v in highlight_edges:
+            eid = f"{u}__{v}"
+            edge_styles.append(EdgeStyle(
+                label=eid,
+                color="red",
+                caption=None,
+                icon=None,
+                directed=True
+            ))
         # 3) 定义布局参数
         breadth_layout = {
             "name": "breadthfirst",
