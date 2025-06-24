@@ -178,9 +178,17 @@ if path_df is not None:
                 x = (i - (len(nodes) - 1) / 2) * spacing
                 y = -layer * layer_spacing
                 pos[node] = (x, y)
-
-        st.subheader("地层关系查询")
+                    
         node_list = list(G_draw.nodes)
+            
+        fig_width = min(max(5, spacing * max(len(v) for v in layers.values())), 30)
+        fig_height = min(max(3, layer_spacing * len(layers)), 20)
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+        highlight_edges = set()
+        highlight_nodes = set()    
+            
+        st.subheader("地层关系查询")
+
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
         if "unit2" not in st.session_state:
