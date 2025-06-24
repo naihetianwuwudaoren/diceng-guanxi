@@ -292,6 +292,9 @@ if path_df is not None:
         highlight_edges = {(path[i], path[i+1]) for path in all_paths for i in range(len(path)-1)}
         highlight_nodes = {node for path in all_paths for node in path}
         highlight_nodes.update([unit1] + ([unit2] if unit2 else []))
+            
+        highlight_nodes.discard(None)
+        highlight_nodes &= set(G_draw.nodes)
 
         for (u, v) in G_draw.edges:
             is_highlight = (u, v) in highlight_edges
