@@ -281,16 +281,37 @@ if path_df is not None:
         highlight_nodes &= set(G_draw.nodes)
         st.write("【调试】G_draw 节点列表：", list(G_draw.nodes()))
  
-            
-        elements = [
-            {"data": {"id": n, "label": n}, "classes": "highlight"} if n in highlight_nodes
-            else {"data": {"id": n, "label": n}}
-            for n in G_draw.nodes()
-        ] + [
-            {"data": {"source": u, "target": v}, "classes": "highlight"} if (u, v) in highlight_edges
-            else {"data": {"source": u, "target": v}}
-            for u, v in G_draw.edges()
-        ]
+        nodes = []
+        for n in G_draw.nodes():
+            # data 里要有 id, label
+            node_data = {"id": n, "label": n}
+            # 如果在高亮集合里，就在 classes 里标记 "highlight"
+            if n in highlight_nodes:
+                nodes.append({"data": node_data, "classes": "highlight"})
+            else:
+                nodes.append({"data": node_data})
+        
+        # 2) 构造 edges 列表
+        edges = []
+        for u, v in G_draw.edges():
+            # 给每条边一个唯一 id
+            edge_id = f"{u}__{v}"
+            edge_data = {
+                "id": edge_id,
+                "source": u,
+                "target": v,
+                "label": ""   # 如果想在边上显示文字，可以填入这里
+            }
+            if (u, v) in highlight_edges:
+                edges.append({"data": edge_data, "classes": "highlight"})
+            else:
+                edges.append({"data": edge_data})
+        
+        # 3) 打包成 elements 字典
+        elements = {
+            "nodes": nodes,
+            "edges": edges
+        }
         node_styles = [
             NodeStyle(
                 label=str(node),       # 匹配 data["label"] == node
