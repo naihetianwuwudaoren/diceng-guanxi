@@ -113,32 +113,41 @@ if path_df is not None:
             st.stop()
 
         G = nx.transitive_reduction(G)
+        
         if 'subgraph_mode' not in st.session_state:
             st.session_state.subgraph_mode = False
+        if 'sub_input' not in st.session_state:
+            st.session_state.sub_input = ""
+        if 'sub_nodes' not in st.session_state:
+            st.session_state.sub_nodes = []
+        
         col_input, col_toggle = st.columns([4,1])
         with col_input:
             sub_input = st.text_input(
                 "请输入要生成子图的单位（用顿号“、”分隔）", 
-                value=st.session_state.get('sub_input', ''), key='sub_input')
-
-        col1, col2 = st.columns([3,1])
-        with col2:
+                value=st.session_state.sub_input, key="sub_input")
+        with col_button:
             if not st.session_state.subgraph_mode:
                 if st.button("生成子图"):
-                    # 这里用 session_state.sub_input 而不是临时变量
-                    selected = [
-                        u.strip() for u in st.session_state.sub_input.split('、')
-                        if u.strip() in G.nodes
-                    ]
+                    # 从 session_state 拿原始字符串
+                    raw = st.session_state.sub_input  
+                    # 拆分、strip，并且只保留 G.nodes 里真的存在的
+                    candidates = [u.strip() for u in raw.split('、') if u.strip()]
+                    selected  = [u for u in candidates if u in G.nodes]
+                    # 调试输出（可删）
+                    st.write("输入拆分：", candidates)
+                    st.write("有效节点：", selected)
                     if selected:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
+                        st.experimental_rerun()
                     else:
-                        st.write(sub_input)
-                        st.warning("⚠️子图至少要包含一个有效单位")
+                        st.warning("⚠️ 子图至少要包含一个有效单位")
             else:
                 if st.button("返回完整图"):
                     st.session_state.subgraph_mode = False
+                    st.experimental_rerun()
+        
         # 选出当前要绘制的 Graph
         if st.session_state.subgraph_mode:
             G_draw = G.subgraph(st.session_state.sub_nodes).copy()
