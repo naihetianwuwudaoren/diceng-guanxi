@@ -134,6 +134,7 @@ if path_df is not None:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
                     else:
+                        st.write(sub_input)
                         st.warning("⚠️子图至少要包含一个有效单位")
             else:
                 if st.button("返回完整图"):
