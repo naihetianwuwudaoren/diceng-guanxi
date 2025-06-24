@@ -319,7 +319,6 @@ if path_df is not None:
                 label=n,
                 color="#ADD8E6",    # 浅蓝
                 caption=None,
-                icon=None
             ))
         # 再覆盖高亮节点
         for n in highlight_nodes:
@@ -327,7 +326,6 @@ if path_df is not None:
                 label=n,
                 color="orange",
                 caption=None,
-                icon=None
             ))
         
         # EdgeStyle(label, color, caption=None, icon=None, directed=False)
@@ -339,7 +337,6 @@ if path_df is not None:
                 label=eid,
                 color="gray",
                 caption=None,
-                icon=None,
                 directed=True
             ))
         # 高亮的边
@@ -349,7 +346,6 @@ if path_df is not None:
                 label=eid,
                 color="red",
                 caption=None,
-                icon=None,
                 directed=True
             ))
         # 3) 定义布局参数
