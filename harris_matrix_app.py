@@ -365,13 +365,13 @@ if path_df is not None:
         html(
     """
     <div id="cy" style="width:100%; height:200px; background:lightgray; border:2px solid red;">
-      Cytoscape core 加载成功；下面测试 Klay 插件。
+      测试 Klay 插件到底有没有加载到全局！
     </div>
     <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
     <script>
-      console.log("klay:", typeof klay);
-      document.getElementById('cy').innerText += '\\nklay:' + (typeof klay);
+      console.log("cytoscapeKlay:", typeof cytoscapeKlay);
+      document.getElementById('cy').innerText += '\\ncytoscapeKlay:' + (typeof cytoscapeKlay);
     </script>
     """,
     height=240,
