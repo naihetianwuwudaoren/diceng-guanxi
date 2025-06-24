@@ -352,10 +352,7 @@ if path_df is not None:
             for path in all_paths:
                 st.markdown(" → ".join(path))
 
-        buf = BytesIO()
-        fig.savefig(buf, format="png", dpi=150, bbox_inches='tight')
-        buf.seek(0)
-        st.download_button("📥下载为 PNG 图像", data=buf, file_name="harris_matrix.png", mime="image/png")
+
 
     except Exception as e:
         st.error(f"❌ 无法读取数据：{e}")
