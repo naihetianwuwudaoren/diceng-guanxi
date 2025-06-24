@@ -7,6 +7,31 @@ from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
 matplotlib.use("Agg")
 
+# —— 1. 定位到和脚本同级的 simhei.ttf —— 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+font_path = os.path.join(BASE_DIR, "simhei.ttf")
+
+# —— 2. 调试输出，确认文件确实存在且大小正确 —— 
+st.write("🛠 当前工作目录：", os.getcwd())
+st.write("🛠 脚本所在目录：", BASE_DIR)
+st.write("🛠 目录列表：", os.listdir(BASE_DIR))
+if os.path.exists(font_path):
+    st.write("🛠 simhei.ttf 大小：", os.path.getsize(font_path), "bytes")
+else:
+    st.write("🛠 未找到 simhei.ttf 文件！")
+
+# —— 3. 尝试加载 —— 
+if os.path.exists(font_path):
+    try:
+        fontManager.addfont(font_path)
+        font_name = FontProperties(fname=font_path).get_name()
+        matplotlib.rcParams['font.family'] = font_name
+        st.write(f"✅ 成功加载字体：{font_name}")
+    except Exception as e:
+        st.warning(f"🔔 字体加载失败：{e}\n将使用系统默认字体。")
+else:
+    st.warning(f"🔔 没找到字体：{font_path}\n将使用系统默认字体。")
+
 # 设置默认字体
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
