@@ -12,6 +12,63 @@ from st_link_analysis import st_link_analysis
 from st_link_analysis.component.layouts import LAYOUTS
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
+
+
+# 测试用的简易元素
+elements = [
+  # 节点
+  {'data': {'id': 'A', 'label': 'A'}},
+  {'data': {'id': 'B', 'label': 'B'}},
+  {'data': {'id': 'C', 'label': 'C'}},
+  # 边
+  {'data': {'id': 'A__B', 'source': 'A', 'target': 'B'}},
+  {'data': {'id': 'A__C', 'source': 'A', 'target': 'C'}},
+]
+
+# JSON 序列化
+elem_js = json.dumps(elements)
+
+# Klay 布局参数
+layout = {
+  'name': 'klay',
+  'klay': {
+    'nodeDimensionsIncludeLabels': True,
+    'spacing': 50,
+    'edgeSpacingFactor': 0.2,
+    'orientation': 'DOWN',
+    'layering': 'INTERACTIVE'
+  }
+}
+layout_js = json.dumps(layout)
+
+snippet = f"""
+<div id="cy" style="width:100%; height:400px;"></div>
+
+<!-- 1) Cytoscape.js 核心 -->
+<script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+<!-- 2) Klay 插件 -->
+<script src="https://unpkg.com/cytoscape-klay@3.3.0/cytoscape-klay.js"></script>
+
+<script>
+  // 注意：插件的全局变量名可能是 cytoscapeKlay
+  cytoscape.use(cytoscapeKlay);
+
+  const cy = cytoscape({{
+    container: document.getElementById('cy'),
+    elements: {elem_js},
+    layout: {layout_js},
+    style: [
+      {{ selector: 'node', style: {{ 'label': 'data(label)', 'background-color': '#0074D9' }} }},
+      {{ selector: 'edge', style: {{ 'width': 2, 'line-color': '#999', 'target-arrow-shape': 'triangle' }} }}
+    ]
+  }});
+</script>
+"""
+
+st.markdown("### 测试 Klay 布局能否渲染")
+html(snippet, height=420, scrolling=False)
+
+
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
 font_name = FontProperties(fname=font_path).get_name()
