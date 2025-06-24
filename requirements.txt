@@ -2,4 +2,4 @@ streamlit
 pandas
 networkx
 matplotlib
-streamlit-cytoscape
+st-cytoscape
