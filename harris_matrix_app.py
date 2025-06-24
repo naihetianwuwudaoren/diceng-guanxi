@@ -317,14 +317,14 @@ if path_df is not None:
             node_styles.append(NodeStyle(
                 label=n,
                 color="#ADD8E6",    # 浅蓝
-                caption=n,
+                caption="label",
             ))
         # 再覆盖高亮节点
         for n in highlight_nodes:
             node_styles.append(NodeStyle(
                 label=n,
                 color="orange",
-                caption=n,
+                caption="label",
             ))
         
         # EdgeStyle(label, color, caption=None, icon=None, directed=False)
