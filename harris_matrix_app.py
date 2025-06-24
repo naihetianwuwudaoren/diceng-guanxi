@@ -338,20 +338,25 @@ if path_df is not None:
         elements_json   = json.dumps(elements)
         stylesheet_json = json.dumps(stylesheet)
         layout_json     = json.dumps(layout)
+            
+        # 2) 读取本地的 JS 文件   
+        cyto_js = open("cytoscape.min.js", "r", encoding="utf-8").read()
+        klay_js  = open("cytoscape-klay.js",  "r", encoding="utf-8").read()
 
-        # 4) 拼一段 HTML + JS
+        # 3) 拼一段 HTML + JS
         snippet = f"""
         <div id="cy" style="width:100%; height:700px;"></div>
         
-        <!-- Cytoscape.js 和 Klay 插件 -->
-        <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-        <script src="https://unpkg.com/cytoscape-klay@3.2.0/cytoscape-klay.js"></script>
+        <script>
+        {cyto_js}
+        </script>
         
         <script>
-          // 注册插件
-          cytoscape.use(cytoscapeKlay);
+        {klay_js}
+        </script>
         
-          // 初始化
+        <script>
+          cytoscape.use(cytoscapeKlay);
           const cy = cytoscape({{
             container: document.getElementById('cy'),
             elements: {elements_json},
@@ -360,6 +365,7 @@ if path_df is not None:
           }});
         </script>
         """
+        
         
         # 5) 在 Streamlit 里用 HTML 组件渲染
         html(snippet, height=720, scrolling=True)
