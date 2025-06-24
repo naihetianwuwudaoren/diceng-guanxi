@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import networkx as nx
@@ -8,14 +9,14 @@ from io import BytesIO
 matplotlib.use("Agg")
 
 # —— 安全加载 simhei.ttf —— 
-font_path = "simhei.ttf"  # 或者 os.path.join(os.getcwd(), "simhei.ttf")
+font_path = os.path.join(os.getcwd(), "simhei.ttf")  # 或者直接 "simhei.ttf"
 if os.path.exists(font_path):
     try:
         fontManager.addfont(font_path)
         font_name = FontProperties(fname=font_path).get_name()
         matplotlib.rcParams['font.family'] = font_name
     except Exception:
-        pass  # 加载失败就忽略
+        pass  # 加载失败就用默认字体
         
 
 # 页面设置
