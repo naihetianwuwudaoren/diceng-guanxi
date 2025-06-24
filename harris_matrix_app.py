@@ -32,6 +32,8 @@ candidates = [
     "breadthfirst",
     "cose",
     "preset",
+    "dagre",
+    "klay",
 ]
 
 supported = []
