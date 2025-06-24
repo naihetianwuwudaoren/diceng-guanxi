@@ -324,7 +324,7 @@ if path_df is not None:
         }
         
         # 3) 定义样式：普通节点/边和高亮节点/边
-        styles = [
+        stylesheet = [
             {
                 'selector': 'node',
                 'style': {
@@ -334,7 +334,6 @@ if path_df is not None:
                     'background-color': '#ADD8E6',  # 浅蓝
                     'text-valign': 'center',
                     'text-halign': 'center',
-                    'font-size': font_size
                 }
             },
             {
@@ -366,8 +365,6 @@ if path_df is not None:
             style={'width': '100%', 'height': '700px'},
             stylesheet=styles
         )
-                )
-            )
 
         if all_paths:
             st.markdown("**所有可能路径：**")
