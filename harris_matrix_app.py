@@ -120,7 +120,7 @@ if path_df is not None:
             sub_input = st.text_input(
                 "请输入要生成子图的单位（用顿号“、”分隔）", 
                 value=st.session_state.get('sub_input', ''), key='sub_input')
-            )
+
         col1, col2 = st.columns([3,1])
         with col2:
             if not st.session_state.subgraph_mode:
