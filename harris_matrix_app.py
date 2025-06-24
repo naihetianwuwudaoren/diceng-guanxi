@@ -356,13 +356,15 @@ if path_df is not None:
         </script>
         
         <script>
-          cytoscape.use(cytoscapeKlay);
+          cytoscape.use(Klay);
           const cy = cytoscape({{
             container: document.getElementById('cy'),
             elements: {elements_json},
             style:    {stylesheet_json},
             layout:   {layout_json}
           }});
+          cy.zoomingEnabled(true);
+          cy.userZoomingEnabled(true);
         </script>
         """
         
