@@ -340,44 +340,29 @@ if path_df is not None:
         layout_json     = json.dumps(layout)
 
         # 4) 拼一段 HTML + JS
-        cytoscape_html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8" />
-          <!-- 引入 Cytoscape.js -->
-          <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-          <!-- 引入 Klay 布局插件 -->
-          <script src="https://unpkg.com/cytoscape-klay@3.2.0/cytoscape-klay.js"></script>
-          <style>
-            body {{ margin: 0; padding: 0; }}
-            #cy {{ width: 100%; height: 700px; display: block; }}
-          </style>
-        </head>
-        <body>
-          <div id="cy"></div>
-          <script>
-            // 把 Klay 插件注册进 Cytoscape
-            cytoscape.use(cytoscapeKlay);
+        snippet = f"""
+        <div id="cy" style="width:100%; height:700px;"></div>
         
-            // 初始化 cytoscape 实例
-            const cy = cytoscape({{
-              container: document.getElementById('cy'),
-              elements: {elements_json},
-              style: {stylesheet_json},
-              layout: {layout_json}
-            }});
+        <!-- Cytoscape.js 和 Klay 插件 -->
+        <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+        <script src="https://unpkg.com/cytoscape-klay@3.2.0/cytoscape-klay.js"></script>
         
-            // 可选：禁用自动缩放，以方便滚动条
-            cy.zoomingEnabled(true);
-            cy.userZoomingEnabled(true);
-          </script>
-        </body>
-        </html>
+        <script>
+          // 注册插件
+          cytoscape.use(cytoscapeKlay);
+        
+          // 初始化
+          const cy = cytoscape({{
+            container: document.getElementById('cy'),
+            elements: {elements_json},
+            style:    {stylesheet_json},
+            layout:   {layout_json}
+          }});
+        </script>
         """
         
         # 5) 在 Streamlit 里用 HTML 组件渲染
-        html(cytoscape_html, height=720)
+        html(snippet, height=720, sandbox="allow-scripts")
 
         if all_paths:
             st.markdown("**所有可能路径：**")
