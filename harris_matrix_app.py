@@ -184,8 +184,8 @@ if path_df is not None:
 
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
-        if "unit2" not in st.session_state or st.session_state.unit2 not in node_list:
-            st.session_state.unit2 = node_list[min(1, len(node_list)-1)]
+        if "unit2" not in st.session_state and st.session_state.unit2 not in node_list:
+            st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
 
         try:
             longest_path = nx.dag_longest_path(G)
@@ -195,8 +195,13 @@ if path_df is not None:
         except nx.NetworkXUnfeasible:
             st.warning("图中存在环，无法计算最长路径")
 
-        unit1 = st.selectbox("选择起点单位", node_list, index=node_list.index(st.session_state.unit1), key="select_unit1")
-        highlight_all = st.checkbox("查询起点单位相关地层关系")
+        try:
+            default_idx = node_list.index(st.session_state.unit1)
+        except ValueError:
+            default_idx = 0
+            st.session_state.unit1 = node_list[0]
+        
+        unit1 = st.selectbox("选择起点单位", node_list, index=default_idx, key="select_unit1")
 
         def check_relation(u1, u2):
             if u2 is None:
