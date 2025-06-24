@@ -235,7 +235,25 @@ if path_df is not None:
             col2.write("、".join(later_units)   if later_units   else "无")
             col3.subheader(f"与 {unit1} 无直接关系的单位")
             col3.write("、".join(unrelated_units) if unrelated_units else "无")
-            
+            with col1:
+                    if earlier_units:
+                        if st.button(f"查看 “比 {unit1} 更早” 子图", key="sub_early"):
+                            st.session_state.sub_nodes = earlier_units
+                            st.session_state.subgraph_mode = True
+                            st.rerun()
+            with col2:
+                if later_units:
+                    if st.button(f"查看 “比 {unit1} 更晚” 子图", key="sub_late"):
+                        st.session_state.sub_nodes = later_units
+                        st.session_state.subgraph_mode = True
+                        st.rerun()
+            with col3:
+                if unrelated_units:
+                    if st.button(f"查看 “与 {unit1} 无关” 子图", key="sub_unrelated"):
+                        st.session_state.sub_nodes = unrelated_units
+                        st.session_state.subgraph_mode = True
+                        st.rerun()
+                
             seen = set()
             for source in G_draw.nodes:
                 for target in G_draw.nodes:
