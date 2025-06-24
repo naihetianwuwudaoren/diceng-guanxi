@@ -113,10 +113,39 @@ if path_df is not None:
             st.stop()
 
         G = nx.transitive_reduction(G)
-
+        if 'subgraph_mode' not in st.session_state:
+            st.session_state.subgraph_mode = False
+        col_input, col_toggle = st.columns([4,1])
+        with col_input:
+            sub_input = st.text_input(
+                "🗒️ 请输入要生成子图的单位（用逗号分隔）", 
+                value=",".join(st.session_state.get('sub_nodes', []))
+            )
+        with col_toggle:
+            if not st.session_state.subgraph_mode:
+                if st.button("生成子图"):
+                    selected = [
+                        u.strip() for u in sub_input.split(",") 
+                        if u.strip() in G.nodes
+                    ]
+                    if selected:
+                        st.session_state.sub_nodes = selected
+                        st.session_state.subgraph_mode = True
+                    else:
+                        st.warning("⚠️ 子图至少要包含一个有效单位")
+            else:
+                if st.button("返回完整图"):
+                    st.session_state.subgraph_mode = False
+        # 选出当前要绘制的 Graph
+        if st.session_state.subgraph_mode:
+            G_draw = G.subgraph(st.session_state.sub_nodes).copy()
+            st.markdown(f"**当前子图：{', '.join(st.session_state.sub_nodes)}**")
+        else:
+            G_draw = G
+        
         depths = {}
-        for node in nx.topological_sort(G):
-            preds = list(G.predecessors(node))
+        for node in nx.topological_sort(G_draw):
+            preds = list(G_draw.predecessors(node))
             depths[node] = 0 if not preds else max(depths[p] + 1 for p in preds)
 
         layers = {}
@@ -132,7 +161,7 @@ if path_df is not None:
                 pos[node] = (x, y)
 
         st.subheader("地层关系查询")
-        node_list = list(G.nodes)
+        node_list = list(G_draw.nodes)
 
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
