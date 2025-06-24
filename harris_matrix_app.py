@@ -51,7 +51,7 @@ snippet = f"""
 
 <script>
   // 注意：插件的全局变量名可能是 cytoscapeKlay
-  cytoscape.use(cytoscapeKlay);
+  cytoscape.use(Klay);
 
   const cy = cytoscape({{
     container: document.getElementById('cy'),
