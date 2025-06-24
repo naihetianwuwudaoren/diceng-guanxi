@@ -6,7 +6,7 @@ import matplotlib
 from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
 matplotlib.use("Agg")
-import re
+
 # 设置默认字体
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
@@ -116,8 +116,6 @@ if path_df is not None:
         
         if 'subgraph_mode' not in st.session_state:
             st.session_state.subgraph_mode = False
-        if 'sub_input' not in st.session_state:
-            st.session_state.sub_input = ""
         if 'sub_nodes' not in st.session_state:
             st.session_state.sub_nodes = []
         
@@ -125,15 +123,18 @@ if path_df is not None:
         with col_input:
             sub_input = st.text_input(
                 "请输入要生成子图的单位（支持中文逗号、顿号、英文逗号或空格分隔）", 
-                value=st.session_state.sub_input, key="sub_input")
-            st.session_state.sub_input = sub_input
+                value=st.session_state.get("sub_input", ""),
+                key="sub_input"
+            )
+
         with col_btn:
             if not st.session_state.subgraph_mode:
                 if st.button("生成子图"):
                     # 从 session_state 拿原始字符串
-                    raw = st.session_state.sub_input  
+                    raw = sub_input
+                    import re
                     # 拆分、strip，并且只保留 G.nodes 里真的存在的
-                    nnormalized = re.sub(r"[，、\s]+", ",", raw.strip())
+                    normalized = re.sub(r"[，、\s]+", ",", raw.strip())
                     candidates = [tok.strip() for tok in normalized.split(",") if tok.strip()]
                     selected = [tok for tok in candidates if tok in G.nodes]
                     # 调试输出（可删）
