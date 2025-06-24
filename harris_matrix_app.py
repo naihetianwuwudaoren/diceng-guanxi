@@ -278,7 +278,7 @@ if path_df is not None:
                 )
             )
 
-        nx.draw_networkx_nodes(G_draw, pos, nodelist=[n for n in G.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
+        nx.draw_networkx_nodes(G_draw, pos, nodelist=[n for n in G_draw.nodes if n not in highlight_nodes], node_color='lightblue', node_size=node_size, ax=ax)
         nx.draw_networkx_nodes(G_draw, pos, nodelist=list(highlight_nodes), node_color='orange', node_size=node_size+200, ax=ax)
         nx.draw_networkx_labels(G_draw, pos, font_size=font_size, font_family=font_name, ax=ax)
         ax.axis('off')
