@@ -163,22 +163,6 @@ if path_df is not None:
         else:
             G_draw = G
         
-        depths = {}
-        for node in nx.topological_sort(G_draw):
-            preds = list(G_draw.predecessors(node))
-            depths[node] = 0 if not preds else max(depths[p] + 1 for p in preds)
-
-        layers = {}
-        for node, d in depths.items():
-            layers.setdefault(d, []).append(node)
-
-        spacing, layer_spacing = 4.0, 2.5
-        pos = {}
-        for layer, nodes in layers.items():
-            for i, node in enumerate(nodes):
-                x = (i - (len(nodes) - 1) / 2) * spacing
-                y = -layer * layer_spacing
-                pos[node] = (x, y)
                     
         node_list = list(G_draw.nodes)
 
@@ -363,7 +347,7 @@ if path_df is not None:
             elements=elements,
             layout=klay_layout,
             style={'width': '100%', 'height': '700px'},
-            stylesheet=styles
+            stylesheet=stylesheet
         )
 
         if all_paths:
