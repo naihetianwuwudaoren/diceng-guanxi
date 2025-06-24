@@ -278,105 +278,81 @@ if path_df is not None:
         highlight_nodes &= set(G_draw.nodes)
         
         #尝试画klay布局
-        elements = []
-        for n in G_draw.nodes:
-            elements.append({
-                'data': {'id': n, 'label': n},
-                'classes': 'highlight' if n in highlight_nodes else ''
-            })
-        for u, v in G_draw.edges():
-            elements.append({
-                'data': {'source': u, 'target': v},
-                'classes': 'highlight' if (u, v) in highlight_edges else ''
-            })
-            
-        # 2) 定义 Klay 布局参数
-        layout = {
-            'name': 'klay',
-            'klay': {
-                'nodeDimensionsIncludeLabels': True,
-                # 你可以根据需要调整下面几个参数
-                'spacing': 50,
-                'edgeSpacingFactor': 0.2,
-                'orientation': 'DOWN',         # 从上到下
-                'layering': 'INTERACTIVE'      # 自动分层
-            }
-        }
+        elements = [
+            {'data': {'id': n, 'label': n}, 'classes': 'highlight' if n in highlight_nodes else ''}
+            for n in G_draw.nodes()
+        ] + [
+            {'data': {'source': u, 'target': v}, 'classes': 'highlight' if (u, v) in highlight_edges else ''}
+            for u, v in G_draw.edges()
+        ]
         
-        # 3) 定义样式：普通节点/边和高亮节点/边
-        stylesheet = [
+        elements_json   = json.dumps(elements)
+        stylesheet_json = json.dumps([
             {
                 'selector': 'node',
                 'style': {
-                    'label': 'data(label)',
-                    'width': 'mapData(weight, 0, 1, 20, 50)',
-                    'height': 'mapData(weight, 0, 1, 20, 50)',
-                    'background-color': '#ADD8E6',  # 浅蓝
-                    'text-valign': 'center',
-                    'text-halign': 'center',
+                    'label':           'data(label)',
+                    'background-color':'#ADD8E6',
+                    'text-valign':     'center',
+                    'text-halign':     'center',
+                    'font-size':       font_size
                 }
             },
             {
                 'selector': 'edge',
                 'style': {
-                    'width': arrow_width,
-                    'line-color': 'gray',
-                    'target-arrow-shape': 'triangle',
-                    'target-arrow-color': 'gray'
+                    'width':             arrow_width,
+                    'line-color':        'gray',
+                    'target-arrow-shape':'triangle',
+                    'target-arrow-color':'gray'
                 }
             },
             {
                 'selector': '.highlight',
                 'style': {
-                    'background-color': 'orange',
-                    'line-color': 'red',
-                    'target-arrow-color': 'red',
-                    'width': arrow_width + 1.5
+                    'background-color':'orange',
+                    'line-color':     'red',
+                    'target-arrow-color':'red',
+                    'width':          arrow_width + 1.5
                 }
             }
-        ]
-        elements_json   = json.dumps(elements)
-        stylesheet_json = json.dumps(stylesheet)
-        layout_json     = json.dumps(layout)
-            
-        # 3) 拼一段 HTML + JS
-        snippet = f"""
+        ])
+        layout_json = json.dumps({
+            'name': 'klay',
+            'klay': {
+                'nodeDimensionsIncludeLabels': True,
+                'spacing': 50,
+                'edgeSpacingFactor': 0.2,
+                'orientation': 'DOWN',
+                'layering': 'INTERACTIVE'
+            }
+        })
+        
+        # 2) 最终 HTML 片段
+        cyto_html = f"""
         <div id="cy" style="width:100%; height:700px;"></div>
         
-        <!-- Cytoscape 核心 -->
+        <!-- 先加载 Cytoscape 核心 -->
         <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-        <!-- Klay 插件 -->
+        <!-- 再加载 Klay 插件 -->
         <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
         
         <script>
+          // 注册插件
+          cytoscape.use(cytoscapeKlay);
+        
+          // 初始化并渲染
           const cy = cytoscape({{
             container: document.getElementById('cy'),
             elements: {elements_json},
             style:    {stylesheet_json},
             layout:   {layout_json}
           }});
+        
           cy.zoomingEnabled(true);
           cy.userZoomingEnabled(true);
         </script>
         """
-        
-        
-        # 5) 在 Streamlit 里用 HTML 组件渲染
-        html(
-    """
-    <div id="cy" style="width:100%; height:200px; background:lightgray; border:2px solid red;">
-      测试 Klay 插件到底有没有加载到全局！
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
-    <script>
-      console.log("cytoscapeKlay:", typeof cytoscapeKlay);
-      document.getElementById('cy').innerText += '\\ncytoscapeKlay:' + (typeof cytoscapeKlay);
-    </script>
-    """,
-    height=240,
-    scrolling=True
-)
         html(snippet, height=720, scrolling=True)
 
         if all_paths:
