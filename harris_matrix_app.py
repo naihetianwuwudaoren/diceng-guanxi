@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 import pandas as pd
 import networkx as nx
@@ -6,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
-from streamlit_cytoscape import st_cytoscape
+from st_cytoscape import cytoscape
 matplotlib.use("Agg")
 
 # 设置默认字体
@@ -342,12 +341,13 @@ if path_df is not None:
         
         # 4) 渲染 Cytoscape 组件
         st.subheader("图形可交互视图（Klay 布局）")
-        st_cytoscape(
-            id='harris-klay',
-            elements=elements,
-            layout=klay_layout,
-            style={'width': '100%', 'height': '700px'},
-            stylesheet=stylesheet
+        cytoscape(
+            elements,
+            stylesheet,
+            layout=layout,
+            width="100%",
+            height="700px",
+            key="harris-graph"
         )
 
         if all_paths:
