@@ -12,46 +12,6 @@ from st_link_analysis import st_link_analysis
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
 
-# 先造一个极简的 test 元素（2 个节点 + 1 条边）
-elements = {
-    "nodes": [
-        {"data": {"id": "A", "label": "A"}},
-        {"data": {"id": "B", "label": "B"}},
-    ],
-    "edges": [
-        {"data": {"id": "A__B", "source": "A", "target": "B"}},
-    ]
-}
-
-# 常见内置布局名
-candidates = [
-    "grid",
-    "random",
-    "circle",
-    "concentric",
-    "breadthfirst",
-    "cose",
-    "preset",
-    "dagre",
-    "klay",
-]
-
-supported = []
-for name in candidates:
-    try:
-        st_link_analysis(
-            elements=elements,
-            layout={"name": name},
-            height=200,
-            key=f"test_{name}"
-        )
-        supported.append(name)
-    except Exception:
-        # 布局名不支持就会抛
-        pass
-
-st.write("✅ 支持的布局有：", supported)
-
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
 font_name = FontProperties(fname=font_path).get_name()
@@ -384,30 +344,19 @@ if path_df is not None:
                 directed=True
             )
         ]
-        # 3) 定义 Klay 布局参数
-        dagre_layout = {
-            "name": "dagre",
-            "rankDir": "TB",        # 从上到下
-            # 你还可以加 nodeSep, edgeSep, rankSep 等 dagre 特有参数：
-            "nodeSep": 50,
-            "edgeSep": 10,
-            "rankSep": 50,
-        }
-
-        klay_layout = {
-            "name": "klay",
-            "klay": {
-                "nodeDimensionsIncludeLabels": True,
-                "spacing": 50,
-                "edgeSpacingFactor": 0.2,
-                "orientation": "DOWN",
-                "layering": "INTERACTIVE",
-            }
+        # 3) 定义布局参数
+        breadth_layout = {
+            "name": "breadthfirst",
+            "directed": True,      # 按有向图来分层
+            "padding": 30,         # 四周留白
+            "circle": False,       # 不用圆形，按层级排
+            "roots": [n for n in G_draw.nodes() if G_draw.in_degree(n)==0]
+            
         }
         st.subheader("可交互视图（Klay 布局）")
         st_link_analysis(
             elements=elements,
-            layout=dagre_layout,
+            layout=breadth_layout,
             node_styles=node_styles,
             edge_styles=edge_styles,
             height=700,
