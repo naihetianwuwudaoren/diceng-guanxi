@@ -279,8 +279,7 @@ if path_df is not None:
             
         highlight_nodes.discard(None)
         highlight_nodes &= set(G_draw.nodes)
-        st.write("【调试】G_draw 节点列表：", list(G_draw.nodes()))
- 
+
         # — 1) 构造 elements —
         # nodes 列表
         nodes = []
@@ -318,14 +317,14 @@ if path_df is not None:
             node_styles.append(NodeStyle(
                 label=n,
                 color="#ADD8E6",    # 浅蓝
-                caption=None,
+                caption="label",
             ))
         # 再覆盖高亮节点
         for n in highlight_nodes:
             node_styles.append(NodeStyle(
                 label=n,
                 color="orange",
-                caption=None,
+                caption="label",
             ))
         
         # EdgeStyle(label, color, caption=None, icon=None, directed=False)
