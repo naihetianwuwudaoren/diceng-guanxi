@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
-from st_cytoscape import cytoscape
-matplotlib.use("Agg")
+import json
+from streamlit.components.v1 import html
 
 # 设置默认字体
 font_path = "simhei.ttf"
@@ -291,7 +291,7 @@ if path_df is not None:
             })
             
         # 2) 定义 Klay 布局参数
-        klay_layout = {
+        layout = {
             'name': 'klay',
             'klay': {
                 'nodeDimensionsIncludeLabels': True,
@@ -335,17 +335,49 @@ if path_df is not None:
                 }
             }
         ]
+        elements_json   = json.dumps(elements)
+        stylesheet_json = json.dumps(stylesheet)
+        layout_json     = json.dumps(layout)
+
+        # 4) 拼一段 HTML + JS
+        cytoscape_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <!-- 引入 Cytoscape.js -->
+          <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+          <!-- 引入 Klay 布局插件 -->
+          <script src="https://unpkg.com/cytoscape-klay@3.2.0/cytoscape-klay.js"></script>
+          <style>
+            body {{ margin: 0; padding: 0; }}
+            #cy {{ width: 100%; height: 700px; display: block; }}
+          </style>
+        </head>
+        <body>
+          <div id="cy"></div>
+          <script>
+            // 把 Klay 插件注册进 Cytoscape
+            cytoscape.use(cytoscapeKlay);
         
-        # 4) 渲染 Cytoscape 组件
-        st.subheader("图形可交互视图（Klay 布局）")
-        cytoscape(
-            elements,
-            stylesheet,
-            layout=klay_layout,
-            width="100%",
-            height="700px",
-            key="harris-graph"
-        )
+            // 初始化 cytoscape 实例
+            const cy = cytoscape({{
+              container: document.getElementById('cy'),
+              elements: {elements_json},
+              style: {stylesheet_json},
+              layout: {layout_json}
+            }});
+        
+            // 可选：禁用自动缩放，以方便滚动条
+            cy.zoomingEnabled(true);
+            cy.userZoomingEnabled(true);
+          </script>
+        </body>
+        </html>
+        """
+        
+        # 5) 在 Streamlit 里用 HTML 组件渲染
+        html(cytoscape_html, height=720)
 
         if all_paths:
             st.markdown("**所有可能路径：**")
