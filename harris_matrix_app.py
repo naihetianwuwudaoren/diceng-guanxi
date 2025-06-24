@@ -353,7 +353,7 @@ if path_df is not None:
           cy.userZoomingEnabled(true);
         </script>
         """
-        html(snippet, height=720, scrolling=True)
+        html(cyto_html, height=720, scrolling=True)
 
         if all_paths:
             st.markdown("**所有可能路径：**")
