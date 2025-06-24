@@ -124,7 +124,7 @@ if path_df is not None:
         col_input, col_btn = st.columns([4,1])
         with col_input:
             sub_input = st.text_input(
-                "请输入要生成子图的单位（支持中文逗号、顿号、英文逗号或空格分隔）", 
+                "可以挑选一些你感兴趣的单位，显示它们的关系。  \n请输入要生成子图的单位（支持中文逗号、顿号、英文逗号或空格分隔）", 
                 value=st.session_state.get("sub_input", ""),
                 key="sub_input"
             )
@@ -139,9 +139,7 @@ if path_df is not None:
                     normalized = re.sub(r"[，、\s]+", ",", raw.strip())
                     candidates = [tok.strip() for tok in normalized.split(",") if tok.strip()]
                     selected = [tok for tok in candidates if tok in G.nodes]
-                    # 调试输出（可删）
-                    st.write("输入拆分：", candidates)
-                    st.write("有效节点：", selected)
+                    
                     if selected:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
