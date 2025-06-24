@@ -83,7 +83,7 @@ snippet = """
 <!-- 1) Cytoscape.js 核心 -->
 <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
 <!-- 2) Klay 插件 -->
-<script src="https://unpkg.com/cytoscape-klay@3.3.0/dist/cytoscape-klay.js"></script>
+<script src="https://unpkg.com/cytoscape-klay@3.3.0/cytoscape-klay.js"></script>
 
 <script>
 (function() {{
