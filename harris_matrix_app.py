@@ -362,6 +362,20 @@ if path_df is not None:
         
         
         # 5) 在 Streamlit 里用 HTML 组件渲染
+        html(
+    """
+    <div id="cy" style="width:100%; height:200px; background:lightgray; border:2px solid red;">
+      如果你看不到这段文字，说明 iframe 本身没正确渲染。
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+    <script>
+      console.log("Cytoscape core:", typeof cytoscape);
+      document.getElementById('cy').innerText += '\\nCytoscape:' + (typeof cytoscape);
+    </script>
+    """,
+    height=240,
+    scrolling=True
+)
         html(snippet, height=720, scrolling=True)
 
         if all_paths:
