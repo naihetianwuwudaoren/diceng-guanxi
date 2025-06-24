@@ -7,6 +7,7 @@ from matplotlib.font_manager import fontManager, FontProperties
 from io import BytesIO
 import json
 from streamlit.components.v1 import html
+from st_link_analysis import st_link_analysis
 
 # 设置默认字体
 font_path = "simhei.ttf"
@@ -277,125 +278,55 @@ if path_df is not None:
         highlight_nodes.discard(None)
         highlight_nodes &= set(G_draw.nodes)
         st.write("【调试】G_draw 节点列表：", list(G_draw.nodes()))
-        #尝试画klay布局
+ 
+            
         elements = [
-            {'data': {'id': n, 'label': n}, 'classes': 'highlight' if n in highlight_nodes else ''}
+            {"data": {"id": n, "label": n}, "classes": "highlight" if n in highlight_nodes else ""}
             for n in G_draw.nodes()
         ] + [
-            {'data': {'source': u, 'target': v}, 'classes': 'highlight' if (u, v) in highlight_edges else ''}
+            {"data": {"source": u, "target": v}, "classes": "highlight" if (u, v) in highlight_edges else ""}
             for u, v in G_draw.edges()
-        ]
-        st.write("【调试】elements_json：", json.dumps(elements, ensure_ascii=False, indent=2))
-
-        st.write("--- 测试硬编码例子 ---")
-        html(
-    """
-    <div id="cy2" style="width:100%; height:300px; background:#f0f0f0; border:1px dashed blue;">
-      如果你看不到节点，说明初始化还是没生效。
-    </div>
-    <!-- 加载 Cytoscape 核心 -->
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-    <!-- 加载 Klay 插件 -->
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
-    <script>
-      // 【关键】先注册 Klay 插件
-      cytoscape.use(cytoscapeKlay);
-
-      // 然后再初始化 Cytoscape
-      const cy2 = cytoscape({
-        container: document.getElementById('cy2'),
-        elements: [
-          { data: { id: 'A', label: 'A' } },
-          { data: { id: 'B', label: 'B' } },
-          { data: { id: 'C', label: 'C' } },
-          { data: { source: 'A', target: 'B' } },
-          { data: { source: 'B', target: 'C' } }
-        ],
-        style: [
-          { selector: 'node', style: { 'label':'data(label)', 'background-color':'#66c' } },
-          { selector: 'edge', style: { 'line-color':'#666', 'target-arrow-shape':'triangle' } }
-        ],
-        layout: {
-          name: 'klay',
-          klay: { nodeDimensionsIncludeLabels: true }
+                
+        node_styles = {
+            "label": "data(label)",
+            "background-color": "#ADD8E6",
+            "text-valign": "center",
+            "text-halign": "center",
+            "font-size": font_size,
         }
-      });
-      cy2.zoomingEnabled(true);
-      cy2.userZoomingEnabled(true);
-    </script>
-    """,
-    height=360, scrolling=True
-)
-            
-        elements_json   = json.dumps(elements)
-        stylesheet_json = json.dumps([
-            {
-                'selector': 'node',
-                'style': {
-                    'label':           'data(label)',
-                    'background-color':'#ADD8E6',
-                    'text-valign':     'center',
-                    'text-halign':     'center',
-                    'font-size':       font_size
-                }
-            },
-            {
-                'selector': 'edge',
-                'style': {
-                    'width':             arrow_width,
-                    'line-color':        'gray',
-                    'target-arrow-shape':'triangle',
-                    'target-arrow-color':'gray'
-                }
-            },
-            {
-                'selector': '.highlight',
-                'style': {
-                    'background-color':'orange',
-                    'line-color':     'red',
-                    'target-arrow-color':'red',
-                    'width':          arrow_width + 1.5
-                }
+        edge_styles = {
+            "width": arrow_width,
+            "line-color": "gray",
+            "target-arrow-shape": "triangle",
+            "target-arrow-color": "gray",
+        }
+        highlight_styles = {
+            "background-color": "orange",
+            "line-color": "red",
+            "target-arrow-color": "red",
+            "width": arrow_width + 1.5,
+        }
+        # 3) 定义 Klay 布局参数
+        klay_layout = {
+            "name": "klay",
+            "klay": {
+                "nodeDimensionsIncludeLabels": True,
+                "spacing": 50,
+                "edgeSpacingFactor": 0.2,
+                "orientation": "DOWN",
+                "layering": "INTERACTIVE",
             }
-        ])
-        layout_json = json.dumps({
-            'name': 'klay',
-            'klay': {
-                'nodeDimensionsIncludeLabels': True,
-                'spacing': 50,
-                'edgeSpacingFactor': 0.2,
-                'orientation': 'DOWN',
-                'layering': 'INTERACTIVE'
-            }
-        })
-        
-        # 2) 最终 HTML 片段
-        cyto_html = f"""
-        <div id="cy" style="width:100%; height:700px;"></div>
-        
-        <!-- 先加载 Cytoscape 核心 -->
-        <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-        <!-- 再加载 Klay 插件 -->
-        <script src="https://cdn.jsdelivr.net/npm/cytoscape-klay@3.1.4/cytoscape-klay.js"></script>
-        
-        <script>
-          // 注册插件
-          cytoscape.use(cytoscapeKlay);
-        
-          // 初始化并渲染
-          const cy = cytoscape({{
-            container: document.getElementById('cy'),
-            elements: {elements_json},
-            style:    {stylesheet_json},
-            layout:   {layout_json}
-          }});
-        
-          cy.zoomingEnabled(true);
-          cy.userZoomingEnabled(true);
-        </script>
-        """
-        html(cyto_html, height=720, scrolling=True)
-
+        }
+        st.subheader("可交互视图（Klay 布局）")
+        st_link_analysis(
+            elements=elements,
+            layout=klay_layout,
+            node_styles=node_styles,
+            edge_styles=edge_styles,
+            highlight_styles=highlight_styles,
+            height=700,
+            key="harris-graph"
+        )
         if all_paths:
             st.markdown("**所有可能路径：**")
             for path in all_paths:
