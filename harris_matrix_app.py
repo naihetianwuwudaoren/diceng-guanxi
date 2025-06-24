@@ -182,12 +182,18 @@ if path_df is not None:
                 pos[node] = (x, y)
 
         st.subheader("地层关系查询")
-        node_list = list(G_draw.nodes)
-
+        
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
-        if "unit2" not in st.session_state and st.session_state.unit2 not in node_list:
+        if "unit2" not in st.session_state:
+            # 如果只有一个节点，就让 unit2 为 None
             st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
+        elif st.session_state.unit2 not in node_list:
+            # 如果之前的 unit2 已不在子图里，也重置
+            st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
+
+        node_list = list(G_draw.nodes)
+
 
         try:
             longest_path = nx.dag_longest_path(G_draw)
