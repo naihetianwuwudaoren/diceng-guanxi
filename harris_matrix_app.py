@@ -119,20 +119,22 @@ if path_df is not None:
         with col_input:
             sub_input = st.text_input(
                 "请输入要生成子图的单位（用顿号“、”分隔）", 
-                value="、".join(st.session_state.get('sub_nodes', []))
+                value=st.session_state.get('sub_input', ''), key='sub_input')
             )
-        with col_toggle:
+        col1, col2 = st.columns([3,1])
+        with col2:
             if not st.session_state.subgraph_mode:
                 if st.button("生成子图"):
+                    # 这里用 session_state.sub_input 而不是临时变量
                     selected = [
-                        u.strip() for u in sub_input.split(",") 
+                        u.strip() for u in st.session_state.sub_input.split('、')
                         if u.strip() in G.nodes
                     ]
                     if selected:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
                     else:
-                        st.warning("⚠️ 子图至少要包含一个有效单位")
+                        st.warning("⚠️子图至少要包含一个有效单位")
             else:
                 if st.button("返回完整图"):
                     st.session_state.subgraph_mode = False
