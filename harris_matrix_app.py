@@ -12,63 +12,6 @@ from st_link_analysis import st_link_analysis
 from st_link_analysis.component.layouts import LAYOUTS
 from st_link_analysis.component.styles import NodeStyle, EdgeStyle
 
-
-LAYOUT_NAMES = list(LAYOUTS.keys())
-
-with open("./data/claims.json", "r") as f:
-    elements = json.load(f)
-
-sample = {
-    "nodes": [
-        {"data": {"id": "n1", "label": "PERSON"}},
-        {"data": {"id": "n2", "label": "CAR"}},
-        {"data": {"id": "n3", "label": "CLAIM"}},
-    ],
-    "edges": [
-        {"data": {"id": "e1", "source": "n1", "target": "n2", "label": "DRIVES"}},
-        {"data": {"id": "e2", "source": "n2", "target": "n3", "label": "INVOVLED_IN"}},
-    ],
-}
-
-st.markdown("# Layout Algorithms")
-st.markdown(
-    """
-    You can select from different layout options which determines how elements 
-    positions are calculated in the graph. Refer to 
-    [Cytoscape JS](https://js.cytoscape.org/#layouts) for full options.
-    """
-)
-
-layout = st.selectbox("Layout Name", LAYOUT_NAMES, index=0)
-
-node_styles = [
-    NodeStyle("CLAIM", "#a87c2a", None, "description"),
-    NodeStyle("CAR", "#028391", None, "directions_car"),
-    NodeStyle("PERSON", "#01204E", None, "person"),
-]
-
-st_link_analysis(elements, layout, node_styles, key="xyz")
-
-
-with st.expander("Snippet", expanded=False, icon="💻"):
-    st.code(
-        f"""
-        from st_link_analysis import st_link_analysis, NodeStyle, EdgeStyle
-
-        node_styles = [
-            NodeStyle("CLAIM", "#a87c2a", None, "description"),
-            NodeStyle("CAR", "#028391", None, "directions_car"),
-            NodeStyle("PERSON", "#01204E", None, "person"),
-        ]
-
-        {layout=}
-
-        elements = {json.dumps(sample)}
-
-        st_link_analysis(elements, layout, node_styles, key="xyz")
-    """,
-        language="python",
-    )
 font_path = "simhei.ttf"
 fontManager.addfont(font_path)
 font_name = FontProperties(fname=font_path).get_name()
@@ -414,10 +357,13 @@ if path_df is not None:
             "roots": [n for n in G_draw.nodes() if G_draw.in_degree(n)==0]
             
         }
+        dagre_layout = {
+            "name": "dagre",}
+        
         st.subheader("可交互视图（Klay 布局）")
         st_link_analysis(
             elements=elements,
-            layout=breadth_layout,
+            layout=dagre_layout,
             node_styles=node_styles,
             edge_styles=edge_styles,
             height=700,
