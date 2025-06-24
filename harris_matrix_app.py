@@ -351,10 +351,11 @@ if path_df is not None:
         # 3) 定义布局参数
         breadth_layout = {
             "name": "breadthfirst",
+            "fit": True,
             "directed": True,      # 按有向图来分层
             "padding": 30,         # 四周留白
             "circle": False,       # 不用圆形，按层级排
-            "roots": [n for n in G_draw.nodes() if G_draw.in_degree(n)==0]
+            "avoidOverlap": True
             
         }
         dagre_layout = {
@@ -363,7 +364,7 @@ if path_df is not None:
         st.subheader("可交互视图（Klay 布局）")
         st_link_analysis(
             elements=elements,
-            layout=dagre_layout,
+            layout=breadth_layout,
             node_styles=node_styles,
             edge_styles=edge_styles,
             height=700,
