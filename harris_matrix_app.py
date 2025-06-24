@@ -143,12 +143,14 @@ if path_df is not None:
                     if selected:
                         st.session_state.sub_nodes = selected
                         st.session_state.subgraph_mode = True
+                        st.session_state.show_relation = False
                         st.rerun()
                     else:
                         st.warning("⚠️ 子图至少要包含一个有效单位")
             else:
                 if st.button("返回完整图"):
                     st.session_state.subgraph_mode = False
+                    st.session_state.show_relation = False
                     st.rerun()
         
         # 选出当前要绘制的 Graph
@@ -185,9 +187,8 @@ if path_df is not None:
         elif st.session_state.unit2 not in node_list:
             # 如果之前的 unit2 已不在子图里，也重置
             st.session_state.unit2 = node_list[1] if len(node_list) > 1 else None
-
-
-
+        if "show_relation" not in st.session_state:
+            st.session_state.show_relation = False
 
         try:
             longest_path = nx.dag_longest_path(G_draw)
@@ -204,7 +205,10 @@ if path_df is not None:
             st.session_state.unit1 = node_list[0]
         
         unit1 = st.selectbox("选择起点单位", node_list, index=default_idx, key="select_unit1")
-        highlight_all = st.checkbox("查询起点单位相关地层关系", key="highlight_all")
+
+        if st.button("查询起点单位相关地层关系"):
+            st.session_state.show_relation = True
+        highlight_all = st.session_state.show_relation
 
         def check_relation(u1, u2):
             if u2 is None:
@@ -236,23 +240,24 @@ if path_df is not None:
             col3.subheader(f"与 {unit1} 无直接关系的单位")
             col3.write("、".join(unrelated_units) if unrelated_units else "无")
             with col1:
-                    if earlier_units:
-                            if st.button(f"查看 “比 {unit1} 更早” 子图", key="sub_early"):
-                                    st.session_state.sub_nodes = earlier_units
-                                    st.session_state.subgraph_mode = True
-                                    st.rerun()
+                if earlier_units:
+                    if st.button(f"查看 “比 {unit1} 更早” 子图", key="sub_early"):
+                        st.session_state.sub_nodes = earlier_units
+                        st.session_state.subgraph_mode = True
+                        st.rerun()
             with col2:
-                    if later_units:
-                            if st.button(f"查看 “比 {unit1} 更晚” 子图", key="sub_late"):
-                                st.session_state.sub_nodes = later_units
-                                st.session_state.subgraph_mode = True
-                                st.rerun()
+                if later_units:
+                    if st.button(f"查看 “比 {unit1} 更晚” 子图", key="sub_late"):
+                        st.session_state.sub_nodes = later_units
+                        st.session_state.subgraph_mode = True
+                        st.rerun()
             with col3:
-                    if unrelated_units:
-                            if st.button(f"查看 “与 {unit1} 无关” 子图", key="sub_unrelated"):
-                                st.session_state.sub_nodes = unrelated_units
-                                st.session_state.subgraph_mode = True
-                                st.rerun()
+
+                if unrelated_units:
+                    if st.button(f"查看 “与 {unit1} 无关” 子图", key="sub_unrelated"):
+                        st.session_state.sub_nodes = unrelated_units
+                        st.session_state.subgraph_mode = True
+                        st.rerun()
                 
             seen = set()
             for source in G_draw.nodes:
