@@ -364,7 +364,7 @@ if path_df is not None:
         st.subheader("可交互视图（Klay 布局）")
         st_link_analysis(
             elements=elements,
-            layout=breadth_layout,
+            layout="cose",
             node_styles=node_styles,
             edge_styles=edge_styles,
             height=700,
