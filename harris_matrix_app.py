@@ -362,7 +362,7 @@ if path_df is not None:
         """
         
         # 5) 在 Streamlit 里用 HTML 组件渲染
-        html(snippet, height=720, sandbox="allow-scripts")
+        html(snippet, height=720, scrolling=True)
 
         if all_paths:
             st.markdown("**所有可能路径：**")
