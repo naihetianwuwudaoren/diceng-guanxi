@@ -276,7 +276,7 @@ if path_df is not None:
             
         highlight_nodes.discard(None)
         highlight_nodes &= set(G_draw.nodes)
-        st.write("【调试】G_draw 节点列表：", list(G_draw.nodes())
+        st.write("【调试】G_draw 节点列表：", list(G_draw.nodes()))
         #尝试画klay布局
         elements = [
             {'data': {'id': n, 'label': n}, 'classes': 'highlight' if n in highlight_nodes else ''}
