@@ -341,7 +341,7 @@ if path_df is not None:
         cytoscape(
             elements,
             stylesheet,
-            layout=layout,
+            layout=klay_layout,
             width="100%",
             height="700px",
             key="harris-graph"
