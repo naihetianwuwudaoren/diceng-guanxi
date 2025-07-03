@@ -46,6 +46,18 @@ uploaded_file = None
 path_df = None
 # 替换原有表格读取逻辑：仅在点击按钮并有有效数据后再加载
 data_ready = False
+
+def read_uploaded_csv(uploaded_file):
+    encodings_to_try = ['utf-8', 'utf-8-sig', 'gbk', 'latin1']
+    for enc in encodings_to_try:
+        try:
+            uploaded_file.seek(0)  # 重置指针位置
+            content = uploaded_file.read().decode(enc)
+            return pd.read_csv(io.StringIO(content), header=None)
+        except UnicodeDecodeError:
+            continue
+    raise UnicodeDecodeError("无法解码上传的文件，请确认其编码格式。")
+
 if data_choice != "使用示例数据":
     st.markdown("""
     ### 上传您的地层关系CSV文件  \n
@@ -83,8 +95,13 @@ if data_choice != "使用示例数据":
             st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
 
     if uploaded_file:
-        path_df = pd.read_csv(uploaded_file, header=None)
-        data_ready = True
+        try:
+            path_df = read_uploaded_csv(uploaded_file)
+            st.session_state.path_table = path_df.copy()
+            data_ready = True
+        except UnicodeDecodeError:
+            st.error("❌ 文件编码错误，无法读取。请另存为 UTF-8 或尝试其他编码格式。")
+            data_ready = False
     elif data_ready:
         path_df = st.session_state.path_table.copy()
 
