@@ -74,7 +74,7 @@ if data_choice != "使用示例数据":
     st.markdown("""### 在线填写地层关系  \n
     使用下方表格在线填写路径，每格一个单位，每行的左边格子晚，右边格子早""")
     if "uploaded_df" not in st.session_state:
-    st.session_state.uploaded_df = None
+        st.session_state.uploaded_df = None
     
     if "path_table" not in st.session_state:
         st.session_state.edited_df = pd.DataFrame(
