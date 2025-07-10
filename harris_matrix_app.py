@@ -144,7 +144,9 @@ if path_df is not None:
         edges = parse_paths_from_df(path_df)
         G = nx.DiGraph()
         G.add_edges_from(edges)
-
+        if len(G.nodes) == 0:
+            st.warning("⚠️ 当前没有任何有效路径，请先上传或加载路径数据")
+            st.stop()
         if not nx.is_directed_acyclic_graph(G):
             st.error("❌ 输入图存在环结构，无法构建 Harris Matrix。请检查数据。")
             st.stop()
@@ -216,7 +218,9 @@ if path_df is not None:
 
             
         st.subheader("地层关系查询")
-
+        if not node_list:
+            st.warning("⚠️ 当前图中无节点")
+            st.stop()
         if "unit1" not in st.session_state or st.session_state.unit1 not in node_list:
             st.session_state.unit1 = node_list[0]
         if "unit2" not in st.session_state:
