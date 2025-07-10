@@ -109,7 +109,7 @@ if data_choice != "使用示例数据":
             st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
             
     if st.session_state.uploaded_df is not None:
-    path_df = st.session_state.uploaded_df
+        path_df = st.session_state.uploaded_df
     
     elif st.session_state.data_ready:
         path_df = st.session_state.edited_df.copy()
