@@ -83,7 +83,7 @@ if data_choice != "使用示例数据":
         )
 
     editable_df = st.data_editor(
-        st.st.session_state.edited_df,
+        st.session_state.edited_df,
         num_rows="dynamic",
         use_container_width=True,
         key="path_editor"
