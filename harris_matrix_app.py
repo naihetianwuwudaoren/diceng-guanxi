@@ -135,6 +135,10 @@ node_size = st.sidebar.slider("节点大小", 500, 5000, 1300, step=100)
 font_size = st.sidebar.slider("字体大小", 6, 30, 16, step=1)
 arrow_width = st.sidebar.slider("箭头线条粗细", 0.5, 10.0, 1.5, step=0.5)
 
+if path_df is None:
+    st.warning("请先上传 CSV 文件或在线填写并加载路径数据")
+    st.stop()
+        
 if path_df is not None:
     try:
         edges = parse_paths_from_df(path_df)
