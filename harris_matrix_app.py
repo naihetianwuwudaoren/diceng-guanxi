@@ -75,15 +75,18 @@ if data_choice != "使用示例数据":
     使用下方表格在线填写路径，每格一个单位，每行的左边格子晚，右边格子早""")
     if "uploaded_df" not in st.session_state:
         st.session_state.uploaded_df = None
-    
     if "path_table" not in st.session_state:
-        st.session_state.edited_df = pd.DataFrame(
+        st.session_state.path_table = pd.DataFrame(
             [["" for _ in range(6)]],
             columns=[f"Unit {i+1}" for i in range(6)]
         )
 
+    if "edited_df" not in st.session_state:
+        st.session_state.edited_df = st.session_state.path_table.copy()
+    
+
     editable_df = st.data_editor(
-        st.session_state.edited_df,
+        st.session_state.path_table,
         num_rows="dynamic",
         use_container_width=True,
         key="path_editor"
@@ -101,7 +104,7 @@ if data_choice != "使用示例数据":
     if st.button("加载上方路径表格为数据"):
         cleaned = editable_df.dropna(how="all")
         if not cleaned.empty:
-            st.st.session_state.edited_df = cleaned.copy()
+            st.session_state.edited_df = cleaned.copy()
             st.session_state.data_ready = True
             st.success("路径数据已加载！")
             st.rerun()
@@ -109,7 +112,7 @@ if data_choice != "使用示例数据":
             st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
             
     if st.session_state.uploaded_df is not None:
-        path_df = st.session_state.uploaded_df
+        path_df = st.session_state.uploaded_df.copy()
     
     elif st.session_state.data_ready:
         path_df = st.session_state.edited_df.copy()
