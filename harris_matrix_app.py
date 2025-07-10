@@ -102,14 +102,23 @@ if data_choice != "使用示例数据":
             st.session_state.data_ready = False
 
     if st.button("加载上方路径表格为数据"):
-        cleaned = editable_df.dropna(how="all")
-        if not cleaned.empty:
-            st.session_state.edited_df = cleaned.copy()
+        df_input = editable_df.copy()
+        paths = []
+        for row in df_input.itertuples(index=False):
+            # 收集这一行中所有非空且 strip() 后非空的单元格
+            nodes = [str(cell).strip() for cell in row if isinstance(cell, str) and cell.strip()]
+            # 只有当这一行至少有 2 个单位时才当成一条路径
+            if len(nodes) >= 2:
+                paths.append(nodes)
+    
+        if paths:
+            # 把 paths 列表直接存到 session_state，后面绘图逻辑直接用它
+            st.session_state.edited_df = pd.DataFrame(paths)
             st.session_state.data_ready = True
-            st.success("路径数据已加载！")
+            st.success(f"✅ 共加载 {len(paths)} 条路径！")
             st.rerun()
         else:
-            st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
+            st.warning("⚠️ 请至少填写一行且包含两个以上单位的路径")
             
     if st.session_state.uploaded_df is not None:
         path_df = st.session_state.uploaded_df.copy()
