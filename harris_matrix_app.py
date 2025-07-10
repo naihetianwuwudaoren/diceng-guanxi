@@ -46,7 +46,8 @@ data_choice = st.radio("请选择数据来源", ["使用示例数据", "上传 C
 uploaded_file = None
 path_df = None
 # 替换原有表格读取逻辑：仅在点击按钮并有有效数据后再加载
-data_ready = False
+if "data_ready" not in st.session_state:
+    st.session_state.data_ready = False
 
 def read_uploaded_csv(uploaded_file):
     encodings_to_try = ['utf-8', 'utf-8-sig', 'gbk', 'latin1']
@@ -72,43 +73,50 @@ if data_choice != "使用示例数据":
 
     st.markdown("""### 在线填写地层关系  \n
     使用下方表格在线填写路径，每格一个单位，每行的左边格子晚，右边格子早""")
+    if "uploaded_df" not in st.session_state:
+    st.session_state.uploaded_df = None
+    
     if "path_table" not in st.session_state:
-        st.session_state.path_table = pd.DataFrame(
+        st.session_state.edited_df = pd.DataFrame(
             [["" for _ in range(6)]],
             columns=[f"Unit {i+1}" for i in range(6)]
         )
 
     editable_df = st.data_editor(
-        st.session_state.path_table,
+        st.st.session_state.edited_df,
         num_rows="dynamic",
         use_container_width=True,
         key="path_editor"
     )
+    
+    if uploaded_file:
+        try:
+            df_tmp = read_uploaded_csv(uploaded_file)
+            st.session_state.uploaded_df = df_tmp
+            st.session_state.data_ready = True
+        except UnicodeDecodeError:
+            st.error("❌ 文件编码错误，无法读取。请另存为 UTF-8 或尝试其他编码格式。")
+            st.session_state.data_ready = False
 
     if st.button("加载上方路径表格为数据"):
         cleaned = editable_df.dropna(how="all")
         if not cleaned.empty:
-            st.session_state.path_table = cleaned.copy()
-            data_ready = True
+            st.st.session_state.edited_df = cleaned.copy()
+            st.session_state.data_ready = True
             st.success("路径数据已加载！")
             st.rerun()
         else:
             st.warning("请至少填写一行路径，且该行需包含两个以上单位。")
-
-    if uploaded_file:
-        try:
-            path_df = read_uploaded_csv(uploaded_file)
-            st.session_state.path_table = path_df.copy()
-            data_ready = True
-        except UnicodeDecodeError:
-            st.error("❌ 文件编码错误，无法读取。请另存为 UTF-8 或尝试其他编码格式。")
-            data_ready = False
-    elif data_ready:
-        path_df = st.session_state.path_table.copy()
+            
+    if st.session_state.uploaded_df is not None:
+    path_df = st.session_state.uploaded_df
+    
+    elif st.session_state.data_ready:
+        path_df = st.session_state.edited_df.copy()
 
 elif data_choice == "使用示例数据":
     path_df = example_df.copy()
-    data_ready = True
+    st.session_state.data_ready = True
 
 def parse_paths_from_df(df):
     edge_list = []
